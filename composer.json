@@ -1,0 +1,17 @@
+{
+  "name": "manuelj555/sf-utils",
+  "require": {
+    "php": ">=7.2.0",
+    "symfony/framework-bundle": "^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Optime\\Util\\": ""
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
+}
