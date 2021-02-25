@@ -7,6 +7,7 @@ namespace Optime\Util\Validator;
 
 use Optime\Util\Exception\ValidationException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Manuel Aguirre
@@ -17,10 +18,15 @@ class DomainValidator
      * @var ValidatorInterface
      */
     private $validator;
+    /**
+     * @var TranslatorInterface|null
+     */
+    private $translator;
 
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, TranslatorInterface $translator = null)
     {
         $this->validator = $validator;
+        $this->translator = $translator;
     }
 
     public function handle($value, $groups = null): void
@@ -28,7 +34,13 @@ class DomainValidator
         $errors = $this->validator->validate($value, null, $groups);
 
         if (0 < count($errors)) {
-            throw ValidationException::fromValidationErrors($errors);
+            $exception = ValidationException::fromValidationErrors($errors);
+
+            if ($this->translator) {
+                $exception->setTranslator($this->translator);
+            }
+
+            throw $exception;
         }
     }
 

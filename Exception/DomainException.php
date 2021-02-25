@@ -6,6 +6,7 @@
 namespace Optime\Util\Exception;
 
 use Optime\Util\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Manuel Aguirre
@@ -16,6 +17,11 @@ class DomainException extends \Exception
      * @var TranslatableMessage
      */
     private $domainMessage;
+
+    /**
+     * @var TranslatorInterface|null
+     */
+    protected $translator;
 
     public function __construct($message, ...$replaceValues)
     {
@@ -30,6 +36,13 @@ class DomainException extends \Exception
         $this->domainMessage = $message;
 
         parent::__construct((string)$message);
+    }
+
+    public function setTranslator(TranslatorInterface $translator): self
+    {
+        $this->translator = $translator;
+
+        return $this;
     }
 
     public function getDomainMessage(): TranslatableMessage
