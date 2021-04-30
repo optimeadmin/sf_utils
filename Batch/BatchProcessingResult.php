@@ -8,7 +8,7 @@ namespace Optime\Util\Batch;
 /**
  * @author Manuel Aguirre
  */
-class BatchProcessingResult
+class BatchProcessingResult implements \IteratorAggregate
 {
     private $processedItems = [];
     private $unprocessedItems = [];
