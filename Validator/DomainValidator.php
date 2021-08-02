@@ -29,9 +29,9 @@ class DomainValidator
         $this->translator = $translator;
     }
 
-    public function handle($value, $groups = null): void
+    public function handle($value, $constraints = null, $groups = null): void
     {
-        $errors = $this->validator->validate($value, null, $groups);
+        $errors = $this->validator->validate($value, $constraints, $groups);
 
         if (0 < count($errors)) {
             $exception = ValidationException::fromValidationErrors($errors);
@@ -44,9 +44,9 @@ class DomainValidator
         }
     }
 
-    public function isValid($value, $groups = null): bool
+    public function isValid($value, $constraints = null, $groups = null): bool
     {
-        $errors = $this->validator->validate($value, null, $groups);
+        $errors = $this->validator->validate($value, $constraints, $groups);
 
         return 0 === count($errors);
     }
