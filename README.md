@@ -9,13 +9,28 @@ composer require manuelj555/sf-utils @dev
 
 ## Configuración 
 
-Agregar **al principio** del config/services.yaml lo siguiente:
+Agregar como un bundle en el `config/bundles.php`:
+
+```php
+<?php
+
+return [
+    ...
+    Optime\Util\OptimeUtilBundle::class => ['all' => true],
+];
+```
+
+#### Configuración de opciones:
+
+Crear/Ajustar el archivo `config/packages/optime_utils.yaml`:
 
 ```yaml
-# Añadir esto al principo del archivo:
-imports:
-    - { resource: '../vendor/manuelj555/sf-utils/services.yaml' }
+optime_util:
+    locales: [en, es, pt] # Configuración opcional
+    default_locale: "%kernel.default_locale%" # Configuración opcional 
 ```
+
+La idea es definir en ese parametro los locales que va a trabajar la aplicación.
 
 ## Uso
 
