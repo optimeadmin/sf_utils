@@ -26,5 +26,8 @@ class OptimeUtilExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/..'));
         $loader->load('services.yaml');
+
+        $container->setParameter('optime.sf_utils.default_locale', $config['default_locale']);
+        $container->setParameter('optime.sf_utils.locales', $config['locales']);
     }
 }

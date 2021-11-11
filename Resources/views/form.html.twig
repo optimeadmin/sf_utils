@@ -1,8 +1,8 @@
 {%- block translatable_content_widget -%}
     {%- if 'auto' == col -%}
-        {%- set col = event_locales_count == 1 ? 6 : (event_locales_count > 3 or event_locales_count == 0 ? 4 : 12 / event_locales_count) -%}
+        {%- set col = locales_count == 1 ? 6 : (locales_count > 3 or locales_count == 0 ? 4 : 12 / locales_count) -%}
     {%- endif -%}
-    <div {% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' row ')|trim})} %}{{ block('attributes') }}{% endwith %}>
+    <div class="row" id="{{ id }}">
         {% for child in form|filter(child => not child.rendered) %}
             {{- form_row(child, {col: col | default (12)}) -}}
         {% endfor %}
@@ -10,10 +10,10 @@
 {%- endblock translatable_content_widget -%}
 
 {%- block translatable_content_entry_row -%}
-    <div {% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' col-' ~ col | default (12))|trim})} %}{{ block('attributes') }}{% endwith %}>
-        <div class="input-group mr-sm-2">
+    <div {% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' mb-1 col-' ~ col | default (12))|trim})} %}{{ block('attributes') }}{% endwith %}>
+        <div class="input-group">
             <div class="input-group-prepend">
-                <div class="input-group-text">{{ label }}</div>
+                <div class="input-group-text"><tt>{{ label }}</tt></div>
             </div>
             {{ form_widget(form) }}
         </div>

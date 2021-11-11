@@ -19,11 +19,11 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('locales')
                     ->prototype('scalar')
-//                        ->defaultValue(['%kernel.default_locale%'])
+                        ->defaultValue(['%kernel.default_locale%'])
                     ->end()
                 ->end()
                 ->scalarNode('default_locale')
-//                    ->defaultValue('%kernel.default_locale%')
+                    ->defaultValue('%kernel.default_locale%')
                 ->end()
             ->end();
 

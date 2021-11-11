@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use function array_merge;
 use function count;
 use function strtoupper;
 
@@ -70,6 +71,12 @@ class TranslatableContentType extends AbstractType
             return $value;
         });
 
+        $resolver->setNormalizer('item_options', function (Options $options, $value) {
+            return $value + [
+                'required' => $options['required'],
+                ];
+        });
+
         $resolver->setDefault('default_data', null);
     }
 
@@ -88,15 +95,9 @@ class TranslatableContentType extends AbstractType
         if ($options['default_data']) {
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
-                function (FormEvent $event) use ($options, $locales) {
+                function (FormEvent $event) use ($options) {
                     if (null == $event->getData()) {
-                        $data = [];
-
-                        foreach ($locales as $locale) {
-                            $data[$locale] = $options['default_data'];
-                        }
-
-                        $event->setData($this->contentFactory->newInstance($data));
+                        $event->setData($this->contentFactory->filledWith($options['default_data']));
                     }
                 }
             );
@@ -108,7 +109,7 @@ class TranslatableContentType extends AbstractType
         $locales = $this->localesProvider->getLocales();
 
         /** @var TranslatableContent|null $data */
-        $data = $form->getData();
+        $data = $form->getViewData();
         $isEdit = $data ? $data->isEdit() : false;
 
         $view->vars['locales_count'] = count($locales);

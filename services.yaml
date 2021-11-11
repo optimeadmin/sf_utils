@@ -8,5 +8,5 @@ services:
 
     Optime\Util\Translation\DefaultLocalesProvider:
         arguments:
-            - "%kernel.default_locale%"
-            - "@=container.hasParameter('optime.sf_utils.locales') ? container.getParameter('optime.sf_utils.locales') : null"
+            - "%optime.sf_utils.default_locale%"
+            - "%optime.sf_utils.locales%"

@@ -44,4 +44,9 @@ class Translation
     {
         return $this->contentFactory->newInstance($values);
     }
+
+    public function fromString(string $content): TranslatableContent
+    {
+        return $this->contentFactory->fromString($content);
+    }
 }

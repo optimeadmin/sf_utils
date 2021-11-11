@@ -49,6 +49,17 @@ class TranslatableContentFactory
         return new TranslatableContent($contents, $this->localesProvider->getDefaultLocale());
     }
 
+    public function fromString(string $content): TranslatableContent
+    {
+        $contents = [];
+
+        foreach ($this->localesProvider->getLocales() as $locale) {
+            $contents[$locale] = $content;
+        }
+
+        return $this->newInstance($contents);
+    }
+
     public function load(object $entity, string $property): TranslatableContent
     {
         $translations = $this->translationRepository->findTranslations($entity);
