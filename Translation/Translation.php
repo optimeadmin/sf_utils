@@ -30,9 +30,9 @@ class Translation
         $this->contentFactory = $contentFactory;
     }
 
-    public function preparePersist(object $entity, bool $autoFlush = false): PreparedPersister
+    public function preparePersist(object $entity): PreparedPersister
     {
-        return $this->contentPersister->prepare($entity, $autoFlush);
+        return $this->contentPersister->prepare($entity);
     }
 
     public function loadContent(object $entity, string $property): TranslatableContent

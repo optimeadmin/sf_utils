@@ -12,8 +12,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Manuel Aguirre
@@ -33,24 +31,6 @@ class AutoTransFieldType extends AbstractType
     public function getParent()
     {
         return TranslatableContentType::class;
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'auto_flush' => false,
-            'setter' => function ($entity, $value, FormInterface $form) {
-                if (is_object($entity) && $form->getConfig()->getMapped()) {
-                    $flush = (bool)$form->getConfig()->getOption('auto_flush');
-
-                    $this->translation
-                        ->preparePersist($entity, $flush)
-                        ->persist($form->getPropertyPath(), $form->getNormData());
-                }
-            }
-        ]);
-
-        $resolver->setAllowedTypes('auto_flush', 'bool');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
