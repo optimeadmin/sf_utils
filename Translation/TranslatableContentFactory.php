@@ -13,6 +13,7 @@ use Optime\Util\Entity\Event;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use function Doctrine\ORM\QueryBuilder;
 use function get_class;
+use function sprintf;
 
 /**
  * @author Manuel Aguirre
@@ -112,7 +113,9 @@ class TranslatableContentFactory
             ->setMaxResults(1);
 
         foreach ($identifier as $col => $value) {
-            $queryBuilder->andWhere($queryBuilder->expr()->eq('o.' . $col, $value));
+            $queryBuilder
+                ->andWhere(sprintf('o.%s = :%s', $col, $col))
+                ->setParameter($col, $value);
         }
 
         try {

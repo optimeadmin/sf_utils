@@ -6,6 +6,7 @@
 namespace Optime\Util\Translation\Persister;
 
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
+use Gedmo\Translatable\TranslatableListener;
 use Optime\Util\Entity\Event;
 use Optime\Util\Translation\LocalesProviderInterface;
 
@@ -19,15 +20,21 @@ class TranslatableContentPersister
      */
     private $repository;
     /**
+     * @var TranslatableListener
+     */
+    private $translatableListener;
+    /**
      * @var LocalesProviderInterface
      */
     private $localesProvider;
 
     public function __construct(
         TranslationRepository $repository,
+        TranslatableListener $translatableListener,
         LocalesProviderInterface $localesProvider
     ) {
         $this->repository = $repository;
+        $this->translatableListener = $translatableListener;
         $this->localesProvider = $localesProvider;
     }
 
@@ -35,6 +42,7 @@ class TranslatableContentPersister
     {
         return new PreparedPersister(
             $this->repository,
+            $this->translatableListener,
             $targetEntity,
             $this->localesProvider->getLocales(),
             $this->localesProvider->getDefaultLocale()
