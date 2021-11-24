@@ -109,6 +109,40 @@ generica.
 
 #### Clases implicadas:
 
+##### `Optime\Util\Translation\TranslationsAwareInterface`
+
+Esta interfaz debe ser implementada por toda entidad y objeto que contenga y quiera manejar
+propiedades traducibles. Se deben implementar dos métodos para obtener o establecer el locale
+con el que se cargó la entidad o el objeto desde la fuente de datos.
+
+La idea es que esta interfaz va a manejar el atributo en clase que contiene la anotación `@Gedmo\Locale`.
+Ver documentación del atributo del locale [acá](https://github.com/doctrine-extensions/DoctrineExtensions/blob/main/doc/translatable.md#translatable-annotations).
+
+Se puede simplificar la implementación de la interfaz usando el Trait `TranslationsAwareTrait`:
+
+```php
+<?php
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Optime\Util\Translation\TranslationsAwareInterface;
+use Optime\Util\Translation\TranslationsAwareTrait;
+
+/**
+ * @ORM\Entity()
+ */
+class Entidad implements TranslationsAwareInterface
+{
+    use TranslationsAwareTrait;
+    
+    ...
+}
+```
+
+Con el trait y se incorporan los métodos de la interfaz y el atributo
+con la anotación `@Gedmo\Locale`.
+
 ##### `Optime\Util\Translation\TranslatableContent`
 
 Esta clase es un objeto "value object" que contiene un arreglo con un texto
@@ -137,7 +171,8 @@ $newContent = $translation->newContent([
 $newContent = $translation->fromString('Hi'); // todos los locales tendrán el mismo texto
 
 // Obtener traducciones existentes en una entidad.
-$object = $repository->find(1);
+$object = $repository->find(1); // object debe implementar TranslationsAwareInterface
+$translation->refreshInDefaultLocale($object); // importante refrescar el objeto en el locale por defecto de la app.
 $titleTranslations = $translation->loadContent($object, 'title');
 $descriptionTranslations = $translation->loadContent($object, 'description');
 
@@ -149,7 +184,8 @@ $titleContent = $translation->newContent([
     'en' => 'Hi',
     'es' => 'Hola',
 ]);
-$newObject = new EntityClass();
+$newObject = new EntityClass(); // EntityClass debe implementar TranslationsAwareInterface
+$translation->refreshInDefaultLocale($newObject); // importante refrescar el objeto en el locale por defecto de la app.
 $newObject->setTitle((string)$titleContent); // castear a string retorna el valor en el locale por defecto.
 $persister = $translation->preparePersist($newObject);
 $persister->persist('title', $titleContent);
@@ -158,7 +194,8 @@ $entityManager->flush();
 
 // Actualizando traducciones
 
-$object = $repository->find(1);
+$object = $repository->find(1); // object debe implementar TranslationsAwareInterface
+$translation->refreshInDefaultLocale($object); // importante refrescar el objeto en el locale por defecto de la app.
 $titleTranslations = $translation->loadContent($object, 'title');
 
 $titleTranslations->setValues(['en' => 'Other title', 'es' => 'Otro titulo']);
@@ -177,9 +214,9 @@ $entityManager->flush();
  * Optime\Util\Translation\TranslatableContentFactory
     * `newInstance(array $contents = []): TranslatableContent`
     * `fromString(string $content): TranslatableContent`
-    * `load(object $entity, string $property): TranslatableContent`
+    * `load(TranslationsAwareInterface $entity, string $property): TranslatableContent`
  * Optime\Util\Translation\Persister\TranslatableContentPersister
-    * `prepare(object $targetEntity): PreparedPersister`
+    * `prepare(TranslationsAwareInterface $targetEntity): PreparedPersister`
  * Optime\Util\Translation\Persister\PreparedPersister
     * `persist(string $property, TranslatableContent $translations): void`
     
@@ -259,3 +296,40 @@ public function formAction(Request $request, TranslationsFormHandler $formHandle
     }
 } 
 ```
+
+### Consideraciones importantes al usar traducciones
+
+Cuando estamos cargando o persistiendo traducciones es importante que las
+entidades estén cargadas en el locale por defecto de la plataforma y no en el locale
+de la url. Ya que de lo contrario se van a guardar los valores traducidos en locales diferentes
+a los esperados.
+
+Por lo que para poder cargar o persistir las traducciones se debe haber cargado
+la entidad en el locale por defecto o usar el siguiente código para que la 
+entidad se refresque en el locale por defecto:
+
+```php
+<?php
+
+$translation = ... obtenemos el servicio Optime\Util\Translation\Translation
+
+$object = $repository->find(1);
+
+// importante refrescar el objeto en el locale por defecto de la app.
+$translation->refreshInDefaultLocale($object);
+// Se debe refrescar el objeto antes de hacerle algún cambio, ya que al refrescar
+// se revierten todos los posibles cambios no guardados en la entidad.
+
+$newContent = $translation->newContent([
+    'en' => 'Hi',
+    'es' => 'Hola',
+]);
+
+$object->setTitle((string)$titleContent);
+$persister = $translation->preparePersist($object);
+$persister->persist('title', $titleContent);
+$entityManager->flush();
+```
+
+Si se intentar cargar o persistir traducciones y la entidad no está en el locale
+por defecto, la app lanzará una excepción indicando el error.
