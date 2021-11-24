@@ -5,12 +5,13 @@
 
 namespace Optime\Util\Translation;
 
+use JsonSerializable;
 use Optime\Util\Entity\Language;
 
 /**
  * @author Manuel Aguirre
  */
-class TranslatableContent implements \IteratorAggregate
+class TranslatableContent implements \IteratorAggregate, JsonSerializable
 {
     /**
      * @var array
@@ -89,5 +90,10 @@ class TranslatableContent implements \IteratorAggregate
     public function isEmpty(): bool
     {
         return 0 === count($this->getValues());
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->getValues();
     }
 }
