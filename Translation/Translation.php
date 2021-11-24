@@ -21,21 +21,27 @@ class Translation
      * @var TranslatableContentFactory
      */
     private $contentFactory;
+    /**
+     * @var DefaultLocaleEntityRefresh
+     */
+    private $localeEntityRefresh;
 
     public function __construct(
         TranslatableContentPersister $contentPersister,
-        TranslatableContentFactory $contentFactory
+        TranslatableContentFactory $contentFactory,
+        DefaultLocaleEntityRefresh $localeEntityRefresh
     ) {
         $this->contentPersister = $contentPersister;
         $this->contentFactory = $contentFactory;
+        $this->localeEntityRefresh = $localeEntityRefresh;
     }
 
-    public function preparePersist(object $entity): PreparedPersister
+    public function preparePersist(TranslationsAwareInterface $entity): PreparedPersister
     {
         return $this->contentPersister->prepare($entity);
     }
 
-    public function loadContent(object $entity, string $property): TranslatableContent
+    public function loadContent(TranslationsAwareInterface $entity, string $property): TranslatableContent
     {
         return $this->contentFactory->load($entity, $property);
     }
@@ -48,5 +54,10 @@ class Translation
     public function fromString(string $content): TranslatableContent
     {
         return $this->contentFactory->fromString($content);
+    }
+
+    public function refreshInDefaultLocale(TranslationsAwareInterface $entity): void
+    {
+        $this->localeEntityRefresh->refresh($entity);
     }
 }

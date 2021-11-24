@@ -9,6 +9,7 @@ use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Gedmo\Translatable\TranslatableListener;
 use Optime\Util\Entity\Event;
 use Optime\Util\Translation\TranslatableContent;
+use Optime\Util\Translation\TranslationsAwareInterface;
 
 /**
  * @author Manuel Aguirre
@@ -24,7 +25,7 @@ class PreparedPersister
      */
     private $listener;
     /**
-     * @var object
+     * @var TranslationsAwareInterface
      */
     private $entity;
     /**
@@ -39,7 +40,7 @@ class PreparedPersister
     public function __construct(
         TranslationRepository $repository,
         TranslatableListener $listener,
-        object $entity,
+        TranslationsAwareInterface $entity,
         array $locales,
         string $defaultLocale
     ) {

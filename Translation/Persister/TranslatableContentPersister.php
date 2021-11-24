@@ -8,7 +8,9 @@ namespace Optime\Util\Translation\Persister;
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Gedmo\Translatable\TranslatableListener;
 use Optime\Util\Entity\Event;
+use Optime\Util\Translation\DefaultLocaleChecker;
 use Optime\Util\Translation\LocalesProviderInterface;
+use Optime\Util\Translation\TranslationsAwareInterface;
 
 /**
  * @author Manuel Aguirre
@@ -27,19 +29,27 @@ class TranslatableContentPersister
      * @var LocalesProviderInterface
      */
     private $localesProvider;
+    /**
+     * @var DefaultLocaleChecker
+     */
+    private $localeChecker;
 
     public function __construct(
         TranslationRepository $repository,
         TranslatableListener $translatableListener,
-        LocalesProviderInterface $localesProvider
+        LocalesProviderInterface $localesProvider,
+        DefaultLocaleChecker $localeChecker
     ) {
         $this->repository = $repository;
         $this->translatableListener = $translatableListener;
         $this->localesProvider = $localesProvider;
+        $this->localeChecker = $localeChecker;
     }
 
-    public function prepare(object $targetEntity): PreparedPersister
+    public function prepare(TranslationsAwareInterface $targetEntity): PreparedPersister
     {
+        $this->localeChecker->throwOnInvalidLocale($targetEntity);
+
         return new PreparedPersister(
             $this->repository,
             $this->translatableListener,
