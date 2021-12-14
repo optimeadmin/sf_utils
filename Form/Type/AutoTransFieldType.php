@@ -8,10 +8,12 @@ namespace Optime\Util\Form\Type;
 use Optime\Util\Form\DataMapper\AutoTransDataMapper;
 use Optime\Util\Form\DataMapper\AutoTransDataTransformer;
 use Optime\Util\Translation\Translation;
+use Optime\Util\Translation\TranslationsFormHandler;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @author Manuel Aguirre
@@ -22,10 +24,15 @@ class AutoTransFieldType extends AbstractType
      * @var Translation
      */
     private $translation;
+    /**
+     * @var TranslationsFormHandler
+     */
+    private $formHandler;
 
-    public function __construct(Translation $translation)
+    public function __construct(Translation $translation, TranslationsFormHandler $formHandler)
     {
         $this->translation = $translation;
+        $this->formHandler = $formHandler;
     }
 
     public function getParent()
@@ -51,5 +58,17 @@ class AutoTransFieldType extends AbstractType
                 $transformer->setTargetObject($root);
             }
         });
+
+        if ($options['auto_save']) {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+                $this->formHandler->persist($event->getForm()->getRoot());
+            });
+        }
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('auto_save', false);
+        $resolver->setAllowedTypes('auto_save', 'bool');
     }
 }
