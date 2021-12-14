@@ -97,7 +97,7 @@ class TranslatableContentType extends AbstractType
                 FormEvents::PRE_SET_DATA,
                 function (FormEvent $event) use ($options) {
                     if (null == $event->getData()) {
-                        $event->setData($this->contentFactory->filledWith($options['default_data']));
+                        $event->setData($this->contentFactory->fromString($options['default_data']));
                     }
                 }
             );
