@@ -284,6 +284,7 @@ public function formAction(Request $request, TranslationsFormHandler $formHandle
                     'type' => TextareaType::class,
                  ])
                  ->getForm();
+    $form->handleRequest($request);
                  
     if ($form->isSubmitted()) {
         dump($form['title']->getData()); // retorna el string en locale por defecto
@@ -295,6 +296,27 @@ public function formAction(Request $request, TranslationsFormHandler $formHandle
         $entityManager->flush();
     }
 } 
+
+public function formActionAutoSave(Request $request) 
+{
+    $entityObject = new EntityClass();
+    
+    $form = $this->createFormBuilder($entityObject)
+                 ->add('title', AutoTransFieldType::class)
+                 ->add('description', AutoTransFieldType::class, [
+                    'auto_save' => true, // activamos guardado automatico.
+                 ])
+                 ->getForm();
+    $form->handleRequest($request);
+                 
+    if ($form->isSubmitted()) {
+        // No hay que hacer nada con las traducciones, el auto_save ya
+        // hace el trabajo de persistirlas.
+        $entityManager->persist($entityObject);
+        $entityManager->flush();
+    }
+} 
+
 ```
 
 ### Consideraciones importantes al usar traducciones
