@@ -43,7 +43,9 @@ class AutoSaveFormExtension extends AbstractTypeExtension
     {
         if ($options['auto_save_translations']) {
             $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-                $this->formHandler->flushAutoSave();
+                if ($event->getForm()->isRoot()) {
+                    $this->formHandler->flushAutoSave();
+                }
             });
         }
     }
