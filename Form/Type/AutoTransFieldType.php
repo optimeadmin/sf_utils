@@ -61,7 +61,7 @@ class AutoTransFieldType extends AbstractType
 
         if ($options['auto_save']) {
             $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-                $this->formHandler->persist($event->getForm()->getRoot());
+                $this->formHandler->forAutoSave($event->getForm());
             });
         }
     }

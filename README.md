@@ -317,6 +317,31 @@ public function formActionAutoSave(Request $request)
     }
 } 
 
+public function formActionManualAutoSave(Request $request, TranslationsFormHandler $formHandler) 
+{
+    $entityObject = new EntityClass();
+    
+    $form = $this->createFormBuilder($entityObject, [
+                      'auto_save_translations' => false, // detenemos auto save
+                 ])
+                 ->add('title', AutoTransFieldType::class)
+                 ->add('description', AutoTransFieldType::class, [
+                    'auto_save' => true,
+                 ])
+                 ->getForm();
+    $form->handleRequest($request);
+                 
+    if ($form->isSubmitted()) {
+        // Hacemos flush del auto save.
+        // Util cuando no tenemos acceso al form y queremos
+        // hacer la persitencia de los AutoTransFieldType
+        // en un sitio especifico.
+        $formHandler->flushAutoSave();
+        $entityManager->persist($entityObject);
+        $entityManager->flush();
+    }
+} 
+
 ```
 
 ### Consideraciones importantes al usar traducciones
