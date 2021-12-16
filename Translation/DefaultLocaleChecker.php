@@ -5,10 +5,10 @@
 
 namespace Optime\Util\Translation;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Gedmo\Translatable\TranslatableListener;
 use Optime\Util\Translation\Exception\EntityNotLoadedInDefaultLocaleException;
-use function dd;
 use function get_class;
 
 /**
@@ -57,9 +57,10 @@ class DefaultLocaleChecker
         $defaultLocale = $this->localesProvider->getDefaultLocale();
 
         if (null === $entity->getCurrentContentsLocale()) {
+            /** @var EntityManagerInterface $em */
             $em = $this->managerRegistry->getManagerForClass(get_class($entity));
 
-            if (!$em->contains($entity)) {
+            if (!$em->getUnitOfWork()->isInIdentityMap($entity)) {
                 // Si es un registro nuevo y no tiene locale definido, le ponemos uno.
                 $entity->setCurrentContentsLocale($defaultLocale);
             }
