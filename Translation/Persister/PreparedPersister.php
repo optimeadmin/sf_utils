@@ -6,7 +6,7 @@
 namespace Optime\Util\Translation\Persister;
 
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
-use Gedmo\Translatable\TranslatableListener;
+use Optime\Util\Translation\TranslatableListener;
 use Optime\Util\Entity\Event;
 use Optime\Util\Translation\TranslatableContent;
 use Optime\Util\Translation\TranslationsAwareInterface;

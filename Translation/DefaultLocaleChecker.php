@@ -7,8 +7,8 @@ namespace Optime\Util\Translation;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Gedmo\Translatable\TranslatableListener;
 use Optime\Util\Translation\Exception\EntityNotLoadedInDefaultLocaleException;
+use Optime\Util\Translation\Exception\TranslationExceptionNotInstalledException;
 use function get_class;
 
 /**
@@ -30,17 +30,19 @@ class DefaultLocaleChecker
     private $managerRegistry;
 
     public function __construct(
-        TranslatableListener $listener,
         LocalesProviderInterface $localesProvider,
-        ManagerRegistry $managerRegistry
+        ManagerRegistry $managerRegistry,
+        TranslatableListener $listener
     ) {
-        $this->listener = $listener;
         $this->localesProvider = $localesProvider;
         $this->managerRegistry = $managerRegistry;
+        $this->listener = $listener;
     }
 
     public function throwOnInvalidLocale(TranslationsAwareInterface $entity): void
     {
+        $this->checkTranslationExtension();
+
         if (!$this->isEntityInDefaultLocale($entity)) {
             $currentLocale = $entity->getCurrentContentsLocale() ?: $this->listener->getListenerLocale();
 
@@ -54,6 +56,8 @@ class DefaultLocaleChecker
 
     public function isEntityInDefaultLocale(TranslationsAwareInterface $entity): bool
     {
+        $this->checkTranslationExtension();
+
         $defaultLocale = $this->localesProvider->getDefaultLocale();
 
         if (null === $entity->getCurrentContentsLocale()) {
@@ -69,5 +73,12 @@ class DefaultLocaleChecker
         $currentLocale = $entity->getCurrentContentsLocale() ?: $this->listener->getListenerLocale();
 
         return $currentLocale == $defaultLocale;
+    }
+
+    private function checkTranslationExtension():void
+    {
+        if (!$this->listener->hasListener()) {
+            throw new TranslationExceptionNotInstalledException();
+        }
     }
 }
