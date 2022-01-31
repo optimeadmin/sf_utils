@@ -12,15 +12,11 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 trait TranslationsAwareTrait
 {
-    /**
-     * @var string|null
-     * @Gedmo\Locale()
-     */
-    private $currentContentsLocale;
+    #[Gedmo\Locale]
+    private string|null $currentContentsLocale;
 
     public function getCurrentContentsLocale(): ?string
     {
-        return $this->currentContentsLocale;
         return $this->currentContentsLocale;
     }
 

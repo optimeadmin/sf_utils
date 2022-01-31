@@ -19,15 +19,11 @@ use function spl_object_id;
  */
 class TranslationsFormHandler
 {
-    /**
-     * @var Translation
-     */
-    private $translation;
-    private $pendingForPersist;
+    private array $pendingForPersist;
 
-    public function __construct(Translation $translation)
-    {
-        $this->translation = $translation;
+    public function __construct(
+        private Translation $translation,
+    ) {
         $this->pendingForPersist = [];
     }
 

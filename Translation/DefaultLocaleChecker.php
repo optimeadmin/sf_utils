@@ -16,27 +16,11 @@ use function get_class;
  */
 class DefaultLocaleChecker
 {
-    /**
-     * @var TranslatableListener
-     */
-    private $listener;
-    /**
-     * @var LocalesProviderInterface
-     */
-    private $localesProvider;
-    /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
-
     public function __construct(
-        LocalesProviderInterface $localesProvider,
-        ManagerRegistry $managerRegistry,
-        TranslatableListener $listener
+        private LocalesProviderInterface $localesProvider,
+        private ManagerRegistry $managerRegistry,
+        private TranslatableListener $listener,
     ) {
-        $this->localesProvider = $localesProvider;
-        $this->managerRegistry = $managerRegistry;
-        $this->listener = $listener;
     }
 
     public function throwOnInvalidLocale(TranslationsAwareInterface $entity): void
@@ -75,7 +59,7 @@ class DefaultLocaleChecker
         return $currentLocale == $defaultLocale;
     }
 
-    private function checkTranslationExtension():void
+    private function checkTranslationExtension(): void
     {
         if (!$this->listener->hasListener()) {
             throw new TranslationExceptionNotInstalledException();

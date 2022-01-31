@@ -5,10 +5,8 @@
 
 namespace Optime\Util\Translation\Validation;
 
-use Optime\Util\Translation\EventLanguageConfigurator;
 use Optime\Util\Translation\LocalesProviderInterface;
 use Optime\Util\Translation\TranslatableContent;
-use Optime\Util\Translation\TranslatableContentsAware;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -19,14 +17,9 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class TranslatableConstraintValidator extends ConstraintValidator
 {
-    /**
-     * @var LocalesProviderInterface
-     */
-    private $localesProvider;
-
-    public function __construct(LocalesProviderInterface $localesProvider)
-    {
-        $this->localesProvider = $localesProvider;
+    public function __construct(
+        private LocalesProviderInterface $localesProvider,
+    ) {
     }
 
     /**

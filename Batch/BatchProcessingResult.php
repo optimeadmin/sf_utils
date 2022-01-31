@@ -10,8 +10,8 @@ namespace Optime\Util\Batch;
  */
 class BatchProcessingResult implements \IteratorAggregate
 {
-    private $processedItems = [];
-    private $unprocessedItems = [];
+    private array $processedItems = [];
+    private array $unprocessedItems = [];
 
     public function addProcessed($item): void
     {

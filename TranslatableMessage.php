@@ -13,24 +13,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TranslatableMessage implements \Serializable
 {
-    /**
-     * @var string
-     */
-    private $message;
-    /**
-     * @var array
-     */
-    private $messageParameters;
-    /**
-     * @var string
-     */
-    private $domain;
-
-    public function __construct(string $message, array $messageParameters = [], string $domain = null)
-    {
-        $this->message = $message;
-        $this->messageParameters = $messageParameters;
-        $this->domain = $domain;
+    public function __construct(
+        private string $message,
+        private array $messageParameters = [],
+        private ?string $domain = null,
+    ) {
     }
 
     public function getMessage(): string
@@ -48,7 +35,7 @@ class TranslatableMessage implements \Serializable
         return $this->domain;
     }
 
-    public function __toString():string
+    public function __toString(): string
     {
         return (string)$this->getMessage();
     }

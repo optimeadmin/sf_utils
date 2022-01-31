@@ -5,6 +5,7 @@
 
 namespace Optime\Util\Translation\Validation;
 
+use Attribute;
 use Symfony\Component\Validator\Constraints\All;
 
 /**
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\Constraints\All;
  *
  * @author Manuel Aguirre
  */
+#[Attribute]
 class TranslatableConstraint extends All
 {
 

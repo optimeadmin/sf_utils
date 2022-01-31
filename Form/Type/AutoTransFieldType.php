@@ -5,7 +5,6 @@
 
 namespace Optime\Util\Form\Type;
 
-use Optime\Util\Form\DataMapper\AutoTransDataMapper;
 use Optime\Util\Form\DataMapper\AutoTransDataTransformer;
 use Optime\Util\Translation\Translation;
 use Optime\Util\Translation\TranslationsFormHandler;
@@ -20,19 +19,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AutoTransFieldType extends AbstractType
 {
-    /**
-     * @var Translation
-     */
-    private $translation;
-    /**
-     * @var TranslationsFormHandler
-     */
-    private $formHandler;
-
-    public function __construct(Translation $translation, TranslationsFormHandler $formHandler)
-    {
-        $this->translation = $translation;
-        $this->formHandler = $formHandler;
+    public function __construct(
+        private Translation $translation,
+        private TranslationsFormHandler $formHandler,
+    ) {
     }
 
     public function getParent()

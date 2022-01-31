@@ -6,9 +6,10 @@
 namespace Optime\Util\Translation\Persister;
 
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
-use Optime\Util\Translation\TranslatableListener;
 use Optime\Util\Entity\Event;
+use Optime\Util\Translation\LocalesProviderInterface;
 use Optime\Util\Translation\TranslatableContent;
+use Optime\Util\Translation\TranslatableListener;
 use Optime\Util\Translation\TranslationsAwareInterface;
 
 /**
@@ -16,50 +17,23 @@ use Optime\Util\Translation\TranslationsAwareInterface;
  */
 class PreparedPersister
 {
-    /**
-     * @var TranslationRepository
-     */
-    private $repository;
-    /**
-     * @var TranslatableListener
-     */
-    private $listener;
-    /**
-     * @var TranslationsAwareInterface
-     */
-    private $entity;
-    /**
-     * @var array
-     */
-    private $locales;
-    /**
-     * @var string
-     */
-    private $defaultLocale;
-
     public function __construct(
-        TranslationRepository $repository,
-        TranslatableListener $listener,
-        TranslationsAwareInterface $entity,
-        array $locales,
-        string $defaultLocale
+        private TranslationRepository $repository,
+        private TranslatableListener $listener,
+        private LocalesProviderInterface $localesProvider,
+        private TranslationsAwareInterface $entity,
     ) {
-        $this->repository = $repository;
-        $this->listener = $listener;
-        $this->entity = $entity;
-        $this->locales = $locales;
-        $this->defaultLocale = $defaultLocale;
     }
 
     public function persist(string $property, TranslatableContent $translations): void
     {
         $listenerLocale = $this->listener->getListenerLocale();
-        if ($listenerLocale != $this->defaultLocale){
-            $this->listener->setTranslatableLocale($this->defaultLocale);
+        if ($listenerLocale != $this->localesProvider->getDefaultLocale()) {
+            $this->listener->setTranslatableLocale($this->localesProvider->getDefaultLocale());
         }
 
-        foreach ($this->locales as $locale) {
-            if ($locale != $this->defaultLocale) {
+        foreach ($this->localesProvider->getLocales() as $locale) {
+            if ($locale != $this->localesProvider->getDefaultLocale()) {
                 $value = $translations->byLocale($locale);
                 $this->repository->translate($this->entity, $property, $locale, $value);
             }

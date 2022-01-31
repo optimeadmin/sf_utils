@@ -6,42 +6,19 @@
 namespace Optime\Util\Translation;
 
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
-use Optime\Util\Entity\Event;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @author Manuel Aguirre
  */
 class TranslatableContentFactory
 {
-    /**
-     * @var TranslationRepository
-     */
-    private $translationRepository;
-    /**
-     * @var PropertyAccessorInterface
-     */
-    private $propertyAccessor;
-    /**
-     * @var LocalesProviderInterface
-     */
-    private $localesProvider;
-    /**
-     * @var DefaultLocaleChecker
-     */
-    private $defaultLocaleChecker;
-
     public function __construct(
-        TranslationRepository $translationRepository,
-        PropertyAccessorInterface $propertyAccessor,
-        LocalesProviderInterface $localesProvider,
-        DefaultLocaleChecker $defaultLocaleChecker
+        private TranslationRepository $translationRepository,
+        private PropertyAccessorInterface $propertyAccessor,
+        private LocalesProviderInterface $localesProvider,
+        private DefaultLocaleChecker $defaultLocaleChecker,
     ) {
-        $this->translationRepository = $translationRepository;
-        $this->propertyAccessor = $propertyAccessor;
-        $this->localesProvider = $localesProvider;
-        $this->defaultLocaleChecker = $defaultLocaleChecker;
     }
 
     public function newInstance(array $contents = []): TranslatableContent

@@ -13,14 +13,9 @@ use Optime\Util\Translation\Exception\TranslationExceptionNotInstalledException;
  */
 class TranslatableListener
 {
-    /**
-     * @var GedmoListener|null
-     */
-    private $listener;
-
-    public function __construct(?GedmoListener $listener = null)
-    {
-        $this->listener = $listener;
+    public function __construct(
+        private ?GedmoListener $listener = null,
+    ) {
     }
 
     public function hasListener(): bool
@@ -39,10 +34,10 @@ class TranslatableListener
     {
         $this->checkTranslationExtension();
 
-        $this->listener->getListenerLocale()();
+        $this->listener->getListenerLocale();
     }
 
-    private function checkTranslationExtension():void
+    private function checkTranslationExtension(): void
     {
         if (!$this->hasListener()) {
             throw new TranslationExceptionNotInstalledException();

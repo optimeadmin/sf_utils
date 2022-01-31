@@ -26,21 +26,10 @@ use function strtoupper;
  */
 class TranslatableContentType extends AbstractType
 {
-    /**
-     * @var LocalesProviderInterface
-     */
-    private $localesProvider;
-    /**
-     * @var TranslatableContentFactory
-     */
-    private $contentFactory;
-
     public function __construct(
-        LocalesProviderInterface $localesProvider,
-        TranslatableContentFactory $contentFactory
+        private LocalesProviderInterface $localesProvider,
+        private TranslatableContentFactory $contentFactory,
     ) {
-        $this->localesProvider = $localesProvider;
-        $this->contentFactory = $contentFactory;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -73,7 +62,7 @@ class TranslatableContentType extends AbstractType
 
         $resolver->setNormalizer('item_options', function (Options $options, $value) {
             return $value + [
-                'required' => $options['required'],
+                    'required' => $options['required'],
                 ];
         });
 

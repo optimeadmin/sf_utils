@@ -16,14 +16,10 @@ use Optime\Util\Translation\TranslationsAwareInterface;
  */
 class TranslatableEntityListener implements EventSubscriberInterface
 {
-    /**
-     * @var LocalesProviderInterface
-     */
-    private $localesProvider;
-
-    public function __construct(LocalesProviderInterface $localesProvider)
+    public function __construct(
+        private LocalesProviderInterface $localesProvider,
+    )
     {
-        $this->localesProvider = $localesProvider;
     }
 
     public function getSubscribedEvents()

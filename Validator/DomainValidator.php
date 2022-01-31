@@ -14,19 +14,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DomainValidator
 {
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-    /**
-     * @var TranslatorInterface|null
-     */
-    private $translator;
-
-    public function __construct(ValidatorInterface $validator, TranslatorInterface $translator = null)
-    {
-        $this->validator = $validator;
-        $this->translator = $translator;
+    public function __construct(
+        private ValidatorInterface $validator,
+        private ?TranslatorInterface $translator = null,
+    ) {
     }
 
     public function handle($value, $constraints = null, $groups = null): void

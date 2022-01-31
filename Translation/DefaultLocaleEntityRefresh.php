@@ -13,27 +13,11 @@ use function get_class;
  */
 class DefaultLocaleEntityRefresh
 {
-    /**
-     * @var LocalesProviderInterface
-     */
-    private $localesProvider;
-    /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
-    /**
-     * @var DefaultLocaleChecker
-     */
-    private $localeChecker;
-
     public function __construct(
-        LocalesProviderInterface $localesProvider,
-        ManagerRegistry $managerRegistry,
-        DefaultLocaleChecker $localeChecker
+        private LocalesProviderInterface $localesProvider,
+        private ManagerRegistry $managerRegistry,
+        private DefaultLocaleChecker $localeChecker,
     ) {
-        $this->localesProvider = $localesProvider;
-        $this->managerRegistry = $managerRegistry;
-        $this->localeChecker = $localeChecker;
     }
 
     public function refresh(TranslationsAwareInterface $entity): void

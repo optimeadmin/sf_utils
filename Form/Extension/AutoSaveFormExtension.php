@@ -18,14 +18,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AutoSaveFormExtension extends AbstractTypeExtension
 {
-    /**
-     * @var TranslationsFormHandler
-     */
-    private $formHandler;
-
-    public function __construct(TranslationsFormHandler $formHandler)
-    {
-        $this->formHandler = $formHandler;
+    public function __construct(
+        private TranslationsFormHandler $formHandler,
+    ) {
     }
 
     public static function getExtendedTypes(): iterable

@@ -10,14 +10,8 @@ namespace Optime\Util\Translation;
  */
 class DefaultLocalesProvider implements LocalesProviderInterface
 {
-    /**
-     * @var string
-     */
-    private $defaultLocale;
-    /**
-     * @var array
-     */
-    private $locales;
+    private string $defaultLocale;
+    private array $locales;
 
     public function __construct(string $defaultLocale, array $locales = null)
     {

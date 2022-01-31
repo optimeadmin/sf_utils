@@ -18,16 +18,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ValidationException extends DomainException
 {
-    /**
-     * @var null|ConstraintViolationInterface|ConstraintViolation
-     */
-    private $error = null;
+    private null|ConstraintViolationInterface|ConstraintViolation $error = null;
 
     public static function fromValidationErrors(
         ConstraintViolationListInterface $errors,
-        TranslatorInterface $translator = null
-    ): self
-    {
+        TranslatorInterface $translator = null,
+    ): self {
         $error = $errors->get(0);
         $exception = new static($error->getMessage());
         $exception->error = $error;
@@ -82,7 +78,7 @@ class ValidationException extends DomainException
             $this->error->getMessageTemplate(),
             $this->error->getParameters(),
             $this->error->getRoot(),
-            'data.'.$this->error->getPropertyPath(),
+            'data.' . $this->error->getPropertyPath(),
             $this->error->getInvalidValue(),
             $this->error->getPlural(),
             $this->error->getCode(),

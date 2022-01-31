@@ -1,8 +1,8 @@
 {
   "name": "manuelj555/sf-utils",
   "require": {
-    "php": "^7.2|^8.0",
-    "symfony/framework-bundle": "^5.0|^6.0"
+    "php": "^8.1",
+    "symfony/framework-bundle": "^5.2|^6.0"
   },
   "autoload": {
     "psr-4": {

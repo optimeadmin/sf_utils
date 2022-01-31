@@ -6,43 +6,24 @@
 namespace Optime\Util\Form\DataMapper;
 
 use Optime\Util\Translation\Translation;
+use Optime\Util\Translation\TranslationsAwareInterface;
 use Symfony\Component\Form\DataTransformerInterface;
-use function dd;
-use function get_call_stack;
 
 /**
  * @author Manuel Aguirre
  */
 class AutoTransDataTransformer implements DataTransformerInterface
 {
-    /**
-     * @var Translation
-     */
-    private $translation;
-    /**
-     * @var string
-     */
-    private $propertyPath;
-    /**
-     * @var object|null
-     */
-    private $targetObject;
-    /**
-     * @var bool
-     */
-    private $mapped;
+    private TranslationsAwareInterface|null $targetObject;
 
     public function __construct(
-        Translation $translation,
-        string $propertyPath,
-        bool $mapped
+        private Translation $translation,
+        private string $propertyPath,
+        private bool $mapped
     ) {
-        $this->translation = $translation;
-        $this->propertyPath = $propertyPath;
-        $this->mapped = $mapped;
     }
 
-    public function setTargetObject(?object $targetObject): void
+    public function setTargetObject(?TranslationsAwareInterface $targetObject): void
     {
         $this->targetObject = $targetObject;
     }

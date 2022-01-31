@@ -13,15 +13,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DomainException extends \Exception
 {
-    /**
-     * @var TranslatableMessage
-     */
-    private $domainMessage;
-
-    /**
-     * @var TranslatorInterface|null
-     */
-    protected $translator;
+    private TranslatableMessage $domainMessage;
+    protected TranslatorInterface|null $translator;
 
     public function __construct($message, ...$replaceValues)
     {

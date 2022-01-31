@@ -13,20 +13,9 @@ use Optime\Util\Entity\Language;
  */
 class TranslatableContent implements \IteratorAggregate, JsonSerializable
 {
-    /**
-     * @var array
-     */
-    private $values;
-
-    /**
-     * @var object
-     */
-    private $target;
-
-    /**
-     * @var string
-     */
-    private $defaultLocale;
+    private array $values;
+    private object $target;
+    private string $defaultLocale;
 
     public function __construct(array $values, string $defaultLocale)
     {

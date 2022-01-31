@@ -13,27 +13,11 @@ use Optime\Util\Translation\Persister\TranslatableContentPersister;
  */
 class Translation
 {
-    /**
-     * @var TranslatableContentPersister
-     */
-    private $contentPersister;
-    /**
-     * @var TranslatableContentFactory
-     */
-    private $contentFactory;
-    /**
-     * @var DefaultLocaleEntityRefresh
-     */
-    private $localeEntityRefresh;
-
     public function __construct(
-        TranslatableContentPersister $contentPersister,
-        TranslatableContentFactory $contentFactory,
-        DefaultLocaleEntityRefresh $localeEntityRefresh
+        private TranslatableContentPersister $contentPersister,
+        private TranslatableContentFactory $contentFactory,
+        private DefaultLocaleEntityRefresh $localeEntityRefresh,
     ) {
-        $this->contentPersister = $contentPersister;
-        $this->contentFactory = $contentFactory;
-        $this->localeEntityRefresh = $localeEntityRefresh;
     }
 
     public function preparePersist(TranslationsAwareInterface $entity): PreparedPersister
