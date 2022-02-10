@@ -13,7 +13,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 trait TranslationsAwareTrait
 {
     #[Gedmo\Locale]
-    private string|null $currentContentsLocale;
+    private string|null $currentContentsLocale = null;
 
     public function getCurrentContentsLocale(): ?string
     {
