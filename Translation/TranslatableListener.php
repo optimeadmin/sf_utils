@@ -34,7 +34,7 @@ class TranslatableListener
     {
         $this->checkTranslationExtension();
 
-        $this->listener->getListenerLocale();
+        return $this->listener->getListenerLocale();
     }
 
     private function checkTranslationExtension(): void
