@@ -8,10 +8,5 @@
     "psr-4": {
       "Optime\\Util\\": ""
     }
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "6.0-dev"
-    }
   }
 }
