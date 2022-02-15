@@ -3,7 +3,7 @@
  * @author Manuel Aguirre
  */
 
-namespace App\Entity\Traits;
+namespace Optime\Util\Entity\Traits;
 
 use Doctrine\ORM\Mapping\Column;
 use Symfony\Component\Uid\Uuid;

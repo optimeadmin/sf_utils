@@ -6,7 +6,7 @@
  * Time: 12:24 PM
  */
 
-namespace App\Entity\Traits;
+namespace Optime\Util\Entity\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
 use Optime\Util\Entity\Embedded\Date;
