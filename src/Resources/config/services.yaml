@@ -4,7 +4,7 @@ services:
         autoconfigure: true
 
     Optime\Util\:
-        resource: './'
+        resource: '../../'
 
     Optime\Util\Translation\DefaultLocalesProvider:
         arguments:
