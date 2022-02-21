@@ -14,7 +14,7 @@ use Symfony\Component\Form\DataTransformerInterface;
  */
 class AutoTransDataTransformer implements DataTransformerInterface
 {
-    private TranslationsAwareInterface|null $targetObject;
+    private TranslationsAwareInterface|null $targetObject = null;
 
     public function __construct(
         private Translation $translation,
