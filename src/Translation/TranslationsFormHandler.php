@@ -68,6 +68,10 @@ class TranslationsFormHandler
             );
         }
 
+        if (!$form->isValid()) {
+            return;
+        }
+
         $translations = $form->getNormData();
 
         if (!$translations instanceof TranslatableContent) {
@@ -93,7 +97,7 @@ class TranslationsFormHandler
             $persister = $this->translation->preparePersist($config['object']);
 
             foreach ($config['fields'] as $propertyPath => $translations) {
-                $persister->persist($propertyPath, $translations);
+                $persister-> persist($propertyPath, $translations);
             }
         }
 

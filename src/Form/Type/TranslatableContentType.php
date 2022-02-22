@@ -39,8 +39,10 @@ class TranslatableContentType extends AbstractType
         $resolver->setDefault('error_bubbling', false);
         $resolver->setDefault('col', 12);
         $resolver->setDefault('item_options', []);
+        $resolver->setDefault('entry_constraints', []);
         $resolver->setAllowedTypes('item_options', 'array');
         $resolver->setAllowedTypes('col', ['int', 'string']);
+        $resolver->setAllowedTypes('entry_constraints', ['array']);
 
         $resolver->setDefault('empty_data', function (FormInterface $form) {
             $values = [];
@@ -78,6 +80,8 @@ class TranslatableContentType extends AbstractType
             $builder->add($locale, $formType, array_merge($options['item_options'], [
                 'label' => strtoupper($locale),
                 'property_path' => sprintf('values[%s]', $locale),
+                'constraints' => $options['entry_constraints'],
+                'validation_groups' => $options['validation_groups'],
             ]));
         }
 
