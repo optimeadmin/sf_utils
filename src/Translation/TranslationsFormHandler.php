@@ -5,26 +5,30 @@
 
 namespace Optime\Util\Translation;
 
+use LogicException;
 use Optime\Util\Form\Type\AutoTransFieldType;
 use RecursiveIteratorIterator;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\InheritDataAwareIterator;
+use WeakMap;
+use function count;
 use function get_class;
+use function gettype;
 use function is_object;
-use function spl_object_id;
+use const PHP_EOL;
 
 /**
  * @author Manuel Aguirre
  */
 class TranslationsFormHandler
 {
-    private array $pendingForPersist;
+    private WeakMap $pendingForPersist;
 
     public function __construct(
         private Translation $translation,
     ) {
-        $this->pendingForPersist = [];
+        $this->pendingForPersist = new WeakMap();
     }
 
     public function persist(FormInterface $form): void
@@ -80,14 +84,22 @@ class TranslationsFormHandler
 
         $propertyPath = (string)$form->getPropertyPath();
         $entity = $form->getParent()->getData();
-        $key = $this->generatePendingKey($entity);
 
-        if (!isset($this->pendingForPersist[$key]['fields'][$propertyPath])) {
-            if (!isset($this->pendingForPersist[$key]['object'])) {
-                $this->pendingForPersist[$key]['object'] = $entity;
+        if (!is_object($entity)) {
+            throw new LogicException(
+                "No se puede hacer uso del " . $this::class .
+                " si el valor del form no es un objeto. Valor Actual: " . gettype($entity) . PHP_EOL .
+                "Si se está creando un nuevo registro, se debe pasar una instancia nueva al form al momento " .
+                "de crearlo 'createForm(FormType::class, new Entity())'"
+            );
+        }
+
+        if (!isset($this->pendingForPersist[$entity]['fields'][$propertyPath])) {
+            if (!isset($this->pendingForPersist[$entity]['object'])) {
+                $this->pendingForPersist[$entity]['object'] = $entity;
             }
 
-            $this->pendingForPersist[$key]['fields'][$propertyPath] = $translations;
+            $this->pendingForPersist[$entity]['fields'][$propertyPath] = $translations;
         }
     }
 
@@ -97,15 +109,12 @@ class TranslationsFormHandler
             $persister = $this->translation->preparePersist($config['object']);
 
             foreach ($config['fields'] as $propertyPath => $translations) {
-                $persister-> persist($propertyPath, $translations);
+                $persister->persist($propertyPath, $translations);
             }
         }
 
-        $this->pendingForPersist = [];
-    }
-
-    private function generatePendingKey(object $entity): string
-    {
-        return spl_object_id($entity);
+        if (0 === count($this->pendingForPersist)) {
+            $this->pendingForPersist = new WeakMap();
+        }
     }
 }
