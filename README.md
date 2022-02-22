@@ -301,10 +301,12 @@ public function formActionAutoSave(Request $request)
 {
     $entityObject = new EntityClass();
     
-    $form = $this->createFormBuilder($entityObject)
+    $form = $this->createFormBuilder($entityObject, [
+                'auto_save_translations' => true, // activamos guardado automatico.
+            ])
                  ->add('title', AutoTransFieldType::class)
                  ->add('description', AutoTransFieldType::class, [
-                    'auto_save' => true, // activamos guardado automatico.
+                    'auto_save' => true, // activamos guardado automatico para este campo.
                  ])
                  ->getForm();
     $form->handleRequest($request);
@@ -321,9 +323,7 @@ public function formActionManualAutoSave(Request $request, TranslationsFormHandl
 {
     $entityObject = new EntityClass();
     
-    $form = $this->createFormBuilder($entityObject, [
-                      'auto_save_translations' => false, // detenemos auto save
-                 ])
+    $form = $this->createFormBuilder($entityObject)
                  ->add('title', AutoTransFieldType::class)
                  ->add('description', AutoTransFieldType::class, [
                     'auto_save' => true,
