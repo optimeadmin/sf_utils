@@ -96,7 +96,7 @@ class TranslationsFormHandler
 
         if (!isset($this->pendingForPersist[$entity]['fields'][$propertyPath])) {
             if (!isset($this->pendingForPersist[$entity]['object'])) {
-                $this->pendingForPersist[$entity]['object'] = $entity;
+                $this->pendingForPersist[$entity] = ['object' => $entity];
             }
 
             $this->pendingForPersist[$entity]['fields'][$propertyPath] = $translations;

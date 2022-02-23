@@ -59,7 +59,9 @@ class TranslatableContentFactory
 
     private function getDefaultLocaleValue(object $entity, string $property): ?string
     {
-        return $this->propertyAccessor->getValue($entity, $property);
+        return $this->propertyAccessor->isReadable($entity, $property)
+            ? $this->propertyAccessor->getValue($entity, $property)
+            : null;
     }
 
     private function getDefaultLocale(): string
