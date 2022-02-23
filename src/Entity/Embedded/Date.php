@@ -20,9 +20,8 @@ class Date
     #[ORM\Column(
         name: 'created_at',
         updatable: false,
-        generated: 'INSERT',
     )]
-    protected DateTimeImmutable $createdAt;
+    private DateTimeImmutable $createdAt;
 
     #[ORM\Column(
         name: 'updated_at',
@@ -30,17 +29,16 @@ class Date
         insertable: false,
         updatable: false,
         columnDefinition: 'timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
-        generated: "ALWAYS",
     )]
-    protected DateTimeImmutable $updatedAt;
+    private DateTimeImmutable $updatedAt;
 
     public function getCreatedAt(): DateTimeImmutable
     {
-        return $this->createdAt;
+        return $this->createdAt ??= new DateTimeImmutable();
     }
 
     public function getUpdatedAt(): DateTimeImmutable
     {
-        return $this->updatedAt;
+        return $this->updatedAt ??= new DateTimeImmutable();
     }
 }
