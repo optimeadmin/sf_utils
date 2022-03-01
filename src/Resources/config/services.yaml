@@ -10,3 +10,13 @@ services:
         arguments:
             - "%optime.sf_utils.default_locale%"
             - "%optime.sf_utils.locales%"
+
+    Optime\Util\Http\EventListener\HandleAjaxFormListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.controller' }
+            - { name: 'kernel.event_listener', event: 'kernel.response' }
+
+    Optime\Util\Http\EventListener\HandleAjaxViewListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.controller' }
+            - { name: 'kernel.event_listener', event: 'kernel.response' }
