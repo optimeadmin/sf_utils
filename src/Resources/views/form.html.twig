@@ -12,9 +12,11 @@
 {%- block translatable_content_entry_row -%}
     <div {% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' mb-1 col-' ~ col | default (12))|trim})} %}{{ block('attributes') }}{% endwith %}>
         <div class="input-group">
+            {% if label is not empty %}
             <div class="input-group-prepend">
                 <div class="input-group-text"><tt>{{ label }}</tt></div>
             </div>
+            {% endif %}
             {{ form_widget(form) }}
         </div>
         {{ form_errors(form) }}
