@@ -10,16 +10,28 @@ use Attribute;
 /**
  * @author Manuel Aguirre
  */
-#[Attribute(Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class PartialAjaxView
 {
     public function __construct(
-        private string $name = 'default'
+        private string|array $name = 'default',
+        private string|null $method = null,
+        private bool $ignoreOnEmpty = false,
     ) {
     }
 
-    public function getName(): string
+    public function getName(): string|array
     {
         return $this->name;
+    }
+
+    public function getMethod(): ?string
+    {
+        return $this->method;
+    }
+
+    public function isIgnoreOnEmpty(): bool
+    {
+        return $this->ignoreOnEmpty;
     }
 }

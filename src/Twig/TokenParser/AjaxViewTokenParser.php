@@ -9,7 +9,6 @@ namespace Optime\Util\Twig\TokenParser;
 use Optime\Util\Twig\Node\AjaxViewNode;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
-use function dump;
 
 /**
  * @author Manuel Aguirre
@@ -21,12 +20,18 @@ class AjaxViewTokenParser extends AbstractTokenParser
     {
         $lineno = $token->getLine();
         $stream = $this->parser->getStream();
-//        $name = $stream->expect(Token::NAME_TYPE)->getValue();
+
+        if ($token = $stream->nextIf(Token::NAME_TYPE)) {
+            $partialName = $token->getValue();
+        } else {
+            $partialName = 'default';
+        }
+
         $stream->expect(Token::BLOCK_END_TYPE);
         $body = $this->parser->subparse([$this, 'decideEnd'], true);
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        return new AjaxViewNode($body, $lineno, $this->getTag());
+        return new AjaxViewNode($body, $partialName, $lineno, $this->getTag());
     }
 
     public function decideEnd(Token $token): bool
