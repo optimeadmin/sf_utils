@@ -25,6 +25,14 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('default_locale')
                     ->defaultValue('%kernel.default_locale%')
                 ->end()
+                ->arrayNode('ajax_check')
+                    ->addDefaultsIfNotSet()
+//                    ->info('')
+                    ->children()
+                        ->scalarNode('header')->defaultNull()->end()
+                        ->scalarNode('param')->defaultNull()->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

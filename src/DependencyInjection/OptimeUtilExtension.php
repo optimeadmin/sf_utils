@@ -5,11 +5,11 @@
 
 namespace Optime\Util\DependencyInjection;
 
+use Optime\Util\Http\Request\AjaxChecker;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use function dd;
 
 /**
  * @author Manuel Aguirre
@@ -29,5 +29,9 @@ class OptimeUtilExtension extends Extension
 
         $container->setParameter('optime.sf_utils.default_locale', $config['default_locale']);
         $container->setParameter('optime.sf_utils.locales', $config['locales']);
+
+        $container
+            ->getDefinition(AjaxChecker::class)
+            ->setArgument(1, $config['ajax_check']);
     }
 }
