@@ -15,15 +15,15 @@ use Twig\Node\Node;
  */
 class AjaxViewNode extends Node
 {
-    public function __construct(Node $body, int $lineno = 0, string $tag = null)
+    public function __construct(Node $body, string $partialName, int $lineno = 0, string $tag = null)
     {
-        parent::__construct(['body' => $body], [], $lineno, $tag);
+        parent::__construct(['body' => $body], ['name' => $partialName], $lineno, $tag);
     }
 
     public function compile(Compiler $compiler)
     {
         $compiler->addDebugInfo($this)
-            ->write("echo '<!--partial-ajax-init-->';\n")
+            ->write("echo '<!-- partial-ajax-init -->';\n")
             ->write("ob_start();\n")
             ->subcompile($this->getNode('body'))
             ->write(sprintf(
@@ -32,10 +32,13 @@ class AjaxViewNode extends Node
             ))
             ->write("if (\$ajaxRuntime->apply()) {\n")
             ->indent()
-            ->write("\$ajaxRuntime->setPartialContent(ob_get_contents());\n")
+            ->write(sprintf(
+                "\$ajaxRuntime->setPartialContent(ob_get_contents(), '%s');\n",
+                $this->getAttribute('name'),
+            ))
             ->outdent()
             ->write("}\n")
             ->write("ob_end_flush();\n")
-            ->write("echo '<!--end-partial-ajax-init-->';\n");
+            ->write("echo '<!-- partial-ajax-end -->';\n");
     }
 }
