@@ -30,6 +30,8 @@ optime_util:
     default_locale: "%kernel.default_locale%" # Configuración opcional 
 ```
 
+<hr>
+
 ## Uso
 
 #### `Optime\Util\Exception\DomainException`
@@ -39,7 +41,9 @@ que serán capturadas y controladas como parte del flujo de un
 proceso Errores de negocio (aprobar algo ya aprobado, rechazar algo
 que no se puede rechazar, salgo insuficiente, etc).
 
-#### `Optime\Util\Exception\ValidationException`
+<hr>
+
+### `Optime\Util\Exception\ValidationException`
 
 Clase para cuando se necesitan lanzar excepciones de validación de dominio, es decir, 
 errores de datos al ejecutar procesos de negocio (formato de un string, valor vacio, etc).
@@ -58,13 +62,17 @@ try {
 }
 ```
 
-#### `Optime\Util\Batch\BatchProcessingResult`
+<hr>
+
+### `Optime\Util\Batch\BatchProcessingResult`
 
 Clase de utilidad que sirve para obtener información del resultado de un proceso por lotes.
 Por ejemplo al cargar un CSV, podemos reflejar en dicha clase los elementos procesados
 correctamente y los que tuvieron algún problema de procesamiento.
 
-#### `Optime\Util\Validator\DomainValidator`
+<hr>
+
+### `Optime\Util\Validator\DomainValidator`
 
 Clase que usa el validador de Symfony y permite facilitar la integración del validador
 de Symfony con las Excepciones de Dominio de esta libreria. Puede lanzar un
@@ -76,9 +84,12 @@ try {
 } catch (\Optime\Util\Exception\ValidationException $e) {
     $e->addFormError($form, $translator);
 }
+
 ```
 
-#### `Optime\Util\TranslatableMessage`
+<hr>
+
+### `Optime\Util\TranslatableMessage`
 
 Clase de utilidad que permite definir un mensaje traducible. Es usada por
 las Excepciones de Dominio de esta libreria. Ejemplo:
@@ -100,6 +111,7 @@ try {
     $this->addFlash('error', $e->getDomainMessage()->trans($translator));
 }
 ```
+<hr>
 
 ### Traducciones en formularios:
 
@@ -380,3 +392,284 @@ $entityManager->flush();
 
 Si se intentar cargar o persistir traducciones y la entidad no está en el locale
 por defecto, la app lanzará una excepción indicando el error.
+
+<hr>
+
+### Atributos para controladores
+
+#### `Optime\Util\Http\Controller\HandleAjaxForm`
+
+Clase de tipo atributo que permite cambiar el status de la respuesta de 
+un formulario invalido a 400 (Bad Request) cuando la petición es ajax. 
+Esto es útil para cuando se está tratando un formulario por medio de 
+un ajax y se quiere saber por javascript si hubo errores 
+de validación y así mostrar dichos errores en el cliente sin recargar 
+la página.
+
+Por otro lado, esta clase permite detener las redirecciones cuando
+son peticiones ajax, por ejemplo cuando se guarda un form y se hace
+un redirect, podemos detener el redirect y convertir la respuesta a un
+status 200 para cuando sea por ajax el envío del form.
+
+##### Ejemplos:
+
+```php
+// Controlador:
+
+use Optime\Util\Http\Controller\HandleAjaxForm;
+
+#[HandleAjaxForm]
+public function formAction(Request $request)
+{
+    $form = $this->createForm(FormType::class);
+    $form->handleRequest($request);
+                 
+    if ($form->isSubmitted() and $form->isValid()) {
+        $entityManager->persist($form->getData());
+        $entityManager->flush();
+    }
+    
+    ...
+}
+```
+
+```js
+$.post('url', $form.serialize()).done(html => {
+    // guardado con exito.
+}).fail(res => {
+    // Usar el atributo #[HandleAjaxForm] en el controlador.
+    // hace que la petición ajax devuelva un statusCode 400
+    // cuando el formulario es inválido
+    if (res.status == 400) {
+        // Si es Bad Request, actualizamos html con errores de
+        // validación
+        $form.html(res.responseText);
+    }
+})
+```
+
+Esta clase recibe varios argumentos en el constructor:
+
+```php
+use Optime\Util\Http\Controller\HandleAjaxForm;
+
+#[HandleAjaxForm(
+    type: string|null,
+    invalidStatus: Response::HTTP_BAD_REQUEST,
+    preventRedirect: true,
+    replaceRedirectContent: true
+)]
+public function formAction(Request $request);
+```
+ * `type` null por defecto, se puede indicar un tipo de form para que solo 
+   se active el handler cuando el form coincida con el tipo. Esto es últil
+   solo si la acción está manejando multiples formularios.
+ * `invalidStatus` Status http a retornar cuando el form sea invalido.
+   por defecto retorna el 400.
+ * `preventRedirect` Indica si se debe evitar cualquier redirect al enviar
+   y procesar el formulario de form exitosa.
+ * `replaceRedirectContent` Indica si se debe reemplazar el contenido de la
+   respuesta cuando es un redirect o no. Si está true, el contenido de 
+   la respuesta será un "Ok".
+
+#### `Optime\Util\Http\Controller\PartialAjaxView`
+
+Clase de tipo atributo que permite retornar de una respuesta html con
+twig solo una parte o varias partes de dicho html y no todo su contenido.
+
+Esto es últil para cuando se tiene una página que puede cargar tanto
+de forma directa con la url en un navegador, como por medio de un ajax 
+con javascript y que solo necesitemos una parte de dicha página html.
+
+##### Ejemplos:
+
+```php
+// Controlador:
+
+use Optime\Util\Http\Controller\PartialAjaxView;
+
+#[HandleAjaxForm]
+#[PartialAjaxView]
+public function formAction(Request $request)
+{
+    $form = $this->createForm(FormType::class);
+    $form->handleRequest($request);
+                 
+    if ($form->isSubmitted() and $form->isValid()) {
+        $entityManager->persist($form->getData());
+        $entityManager->flush();
+    }
+    
+    ...
+}
+```
+
+```jinja
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+   <div class="container">
+      <h1>Titulo Form</h1>
+      
+      {% ajax_view %}
+         {# 
+            El tag ajax_view permite que si la peticióne es ajax,
+            solo se devuelva como contenido html lo que haya dentro
+            del tag.
+         #}
+         {{form(form)}}
+      {% end_ajax_view %}
+       
+   </div>
+{% endblock body %}
+```
+
+```js
+$.post('url', $form.serialize()).fail(res => {
+    if (res.status == 400) {
+        // Si es Bad Request, actualizamos el form.
+        // Lo importante acá es que el html retornado solo
+        // contiene lo que hay dentro del tag "ajax_view"
+        $form.html(res.responseText);
+    }
+})
+```
+
+Esta clase recibe varios argumentos en el constructor:
+
+```php
+use Optime\Util\Http\Controller\PartialAjaxView;
+
+#[PartialAjaxView(
+    name: 'default' string|array,
+    method: null|string,
+    ignoreOnEmpty: false,
+)]
+public function formAction(Request $request);
+```
+* `name` 'default' por defecto, sirve para indicar la o las secciones 
+  que vamos a extraer del twig, contenidas en los tag "ajax_view".
+* `method` permite indicar un método http (get, post, etc) para que
+  el atributo solo se active si la petición es del tipo indicado.
+* `ignoreOnEmpty` Si es true, significa que si no se encontró la etiqueta
+  ajax_view en el twig o su contenido está vacio, se debe retornar la
+  pagina completa. Si es false, retornaría un string vacio.
+
+#### Otros ejemplos de uso:
+
+Para los siguentes ejemplos vamos a partir del siguiente twig:
+
+```jinja
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+   <div class="container">
+      {% ajax_view %}
+      
+         {% ajax_view header %}
+            <h1>Titulo Form</h1>
+         {% end_ajax_view %}
+         
+         {% ajax_view table %}
+            <table>
+               ...
+            </table>
+         {% end_ajax_view %}  
+         
+      {% end_ajax_view %}  
+   </div>
+{% endblock body %}
+```
+
+Este twig tiene tres etiquetas ajax_view, dos con nombre (header y table)
+y una sin nombre, que toma por defecto el nombre "default" al no indicarle
+nada.
+
+##### Ejemplo de especificar la sección a retornar:
+
+```php
+use Optime\Util\Http\Controller\PartialAjaxView;
+
+#[PartialAjaxView("table")]
+public function index(Request $request);
+```
+
+En este casi, si la petición es ajax, solo se retornará la parte
+envuelta en el tag `{% ajax_view table %}` aunque hayan varias etiquetas.
+en dicho twig.
+
+##### Retornar una sección dependiendo del tipo de petición:
+
+```php
+use Optime\Util\Http\Controller\PartialAjaxView;
+
+#[PartialAjaxView("table", method: "post")]
+#[PartialAjaxView("header")]
+public function index(Request $request);
+
+#[PartialAjaxView("table", method: "post")]
+#[PartialAjaxView]
+public function other(Request $request);
+```
+
+Para el método index, si la petición es ajax y de tipo "post", se va
+a retornar la sección "table", de resto se va a retornar la sección "header".
+
+Para el método other, si la petición es ajax y de tipo "post", se va
+a retornar la sección "table", de resto se va a retornar la sección "default".
+
+##### Retornar varias secciones:
+
+```php
+use Optime\Util\Http\Controller\PartialAjaxView;
+
+#[PartialAjaxView(["header", "table"])]
+public function index(Request $request);
+```
+
+Este es una caso particular, y si se desean retornar varias secciones,
+se deben pasar como un arreglo al atributo, esto va hacer que cuando la
+petición sea ajax, el resultado va a ser una respuesta de tipo json con
+las secciones como indices de un objeto json y los valores van a ser los
+contenidos html de dichas secciones.
+
+Esto es útil si por ejemplo tenemos una página con un filtro por ajax, y
+necesitamos que al filtrar, se actualize un listado y un contador que está
+alejadod e dicho listado, entonces podemos tener dos secciones a retornar,
+una con el listado y otra con el contador:
+
+```php
+use Optime\Util\Http\Controller\PartialAjaxView;
+
+#[PartialAjaxView(["list_counter", "list_data"])]
+public function index(Request $request);
+```
+```jinja
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+   <div class="container">
+      
+         <h1>
+            Titulo Form
+            {% ajax_view list_counter %}
+               <span>#{{ items|count }}</span>
+            {% end_ajax_view %}
+         </h1>
+      
+      {% ajax_view list_data %}
+         <table>
+            ...
+         </table>
+      {% end_ajax_view %}
+      
+   </div>
+{% endblock body %}
+```
+```js
+$.get('ajax-page').done(json => {
+    // podemos hacer lo que consideremos, actualizar esas secciones, etc.
+    console.log(json.list_counter); // <span>#24</span>
+    console.log(json.list_data); // <table>...</table>
+});
+```
