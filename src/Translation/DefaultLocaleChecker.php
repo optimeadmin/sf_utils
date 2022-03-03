@@ -8,7 +8,7 @@ namespace Optime\Util\Translation;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Optime\Util\Translation\Exception\EntityNotLoadedInDefaultLocaleException;
-use Optime\Util\Translation\Exception\TranslationExceptionNotInstalledException;
+use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
 use function get_class;
 
 /**
@@ -62,7 +62,7 @@ class DefaultLocaleChecker
     private function checkTranslationExtension(): void
     {
         if (!$this->listener->hasListener()) {
-            throw new TranslationExceptionNotInstalledException();
+            throw new EntityTranslationsNotInstalledException();
         }
     }
 }

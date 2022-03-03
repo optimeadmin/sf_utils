@@ -6,6 +6,7 @@
 namespace Optime\Util\Translation;
 
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
+use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
@@ -14,10 +15,10 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 class TranslatableContentFactory
 {
     public function __construct(
-        private TranslationRepository $translationRepository,
         private PropertyAccessorInterface $propertyAccessor,
         private LocalesProviderInterface $localesProvider,
         private DefaultLocaleChecker $defaultLocaleChecker,
+        private ?TranslationRepository $translationRepository,
     ) {
     }
 
@@ -40,6 +41,10 @@ class TranslatableContentFactory
     public function load(TranslationsAwareInterface $entity, string $property): TranslatableContent
     {
         $this->defaultLocaleChecker->throwOnInvalidLocale($entity);
+
+        if (!$this->translationRepository) {
+            throw new EntityTranslationsNotInstalledException();
+        }
 
         $translations = $this->translationRepository->findTranslations($entity);
         $contents = [];

@@ -10,7 +10,7 @@ use Exception;
 /**
  * @author Manuel Aguirre
  */
-class TranslationExceptionNotInstalledException extends Exception
+class EntityTranslationsNotInstalledException extends Exception
 {
 
 }

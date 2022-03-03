@@ -6,7 +6,7 @@
 namespace Optime\Util\Translation;
 
 use Gedmo\Translatable\TranslatableListener as GedmoListener;
-use Optime\Util\Translation\Exception\TranslationExceptionNotInstalledException;
+use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
 
 /**
  * @author Manuel Aguirre
@@ -40,7 +40,7 @@ class TranslatableListener
     private function checkTranslationExtension(): void
     {
         if (!$this->hasListener()) {
-            throw new TranslationExceptionNotInstalledException();
+            throw new EntityTranslationsNotInstalledException();
         }
     }
 }
