@@ -29,6 +29,10 @@ class OptimeUtilExtension extends Extension
 
         $container->setParameter('optime.sf_utils.default_locale', $config['default_locale']);
         $container->setParameter('optime.sf_utils.locales', $config['locales']);
+        $container->setParameter(
+            'optime.sf_utils.use_translations_extension',
+            $config['use_translations_extension']
+        );
 
         $container
             ->getDefinition(AjaxChecker::class)

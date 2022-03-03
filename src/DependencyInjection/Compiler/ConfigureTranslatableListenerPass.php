@@ -18,6 +18,10 @@ class ConfigureTranslatableListenerPass implements CompilerPassInterface
             return;
         }
 
+        if (false === $container->getParameter('optime.sf_utils.use_translations_extension')) {
+            return;
+        }
+
         $container->setAlias(TranslatableListener::class, 'stof_doctrine_extensions.listener.translatable');
     }
 }

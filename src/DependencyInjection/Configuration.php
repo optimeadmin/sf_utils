@@ -33,6 +33,9 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('param')->defaultNull()->end()
                     ->end()
                 ->end()
+                ->booleanNode('use_translations_extension')
+                    ->defaultTrue()
+                ->end()
             ->end();
 
         return $treeBuilder;
