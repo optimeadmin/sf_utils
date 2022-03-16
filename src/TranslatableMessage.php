@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @author Manuel Aguirre
  */
-class TranslatableMessage implements \Serializable
+class TranslatableMessage
 {
     public function __construct(
         private string $message,
@@ -40,24 +40,6 @@ class TranslatableMessage implements \Serializable
         return (string)$this->getMessage();
     }
 
-    public function serialize()
-    {
-        return serialize([
-            $this->message,
-            $this->messageParameters,
-            $this->domain
-        ]);
-    }
-
-    public function unserialize($serialized)
-    {
-        [
-            $this->message,
-            $this->messageParameters,
-            $this->domain
-        ] = unserialize($serialized);
-    }
-
     public function toFormError(TranslatorInterface $translator): FormError
     {
         return new FormError(
@@ -65,6 +47,24 @@ class TranslatableMessage implements \Serializable
             null,
             $this->getMessageParameters()
         );
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            $this->message,
+            $this->messageParameters,
+            $this->domain
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        [
+            $this->message,
+            $this->messageParameters,
+            $this->domain
+        ] = $data;
     }
 
     public function trans(TranslatorInterface $translator): string

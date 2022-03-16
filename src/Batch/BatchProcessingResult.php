@@ -5,6 +5,8 @@
 
 namespace Optime\Util\Batch;
 
+use Traversable;
+
 /**
  * @author Manuel Aguirre
  */
@@ -43,7 +45,7 @@ class BatchProcessingResult implements \IteratorAggregate
         }
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new \ArrayIterator(array_merge($this->getProcessed(), $this->getUnprocessed()));
     }

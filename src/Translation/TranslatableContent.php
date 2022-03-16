@@ -7,6 +7,7 @@ namespace Optime\Util\Translation;
 
 use JsonSerializable;
 use Optime\Util\Entity\Language;
+use Traversable;
 
 /**
  * @author Manuel Aguirre
@@ -66,7 +67,7 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
         return array_key_exists($locale, $this->values);
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->getValues());
     }
@@ -81,7 +82,7 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
         return 0 === count($this->getValues());
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getValues();
     }
