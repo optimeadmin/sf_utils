@@ -36,6 +36,9 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('use_translations_extension')
                     ->defaultTrue()
                 ->end()
+                ->booleanNode('use_ajax_twig_loader')
+                    ->defaultFalse()
+                ->end()
             ->end();
 
         return $treeBuilder;

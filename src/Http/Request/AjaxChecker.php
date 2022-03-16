@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class AjaxChecker
 {
+    private ?bool $cachedResult = null;
+
     public function __construct(
         private RequestStack $requestStack,
         private array $checkConfig,
@@ -21,24 +23,28 @@ class AjaxChecker
 
     public function isAjax(Request $request = null): bool
     {
+        if (null !== $this->cachedResult) {
+            return $this->cachedResult;
+        }
+
         $request ??= $this->requestStack->getMainRequest();
 
         if ($request->isXmlHttpRequest()) {
-            return true;
+            return $this->cachedResult = true;
         }
 
         if ($header = $this->checkConfig['header'] ?? false) {
             if ($request->headers->has($header)) {
-                return true;
+                return $this->cachedResult = true;
             }
         }
 
         if ($param = $this->checkConfig['param'] ?? false) {
             if ($request->query->has($param) || $request->request->has($param)) {
-                return true;
+                return $this->cachedResult = true;
             }
         }
 
-        return false;
+        return $this->cachedResult = false;
     }
 }

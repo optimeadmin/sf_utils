@@ -20,3 +20,12 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.controller' }
             - { name: 'kernel.event_listener', event: 'kernel.response' }
+
+    Optime\Util\Http\EventListener\HandleAjaxTwigListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.controller' }
+
+    Optime\Util\Twig\Loader\AjaxFileLoader:
+        autoconfigure: false
+        arguments:
+            - ""

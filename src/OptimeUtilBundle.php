@@ -7,6 +7,7 @@ namespace Optime\Util;
 
 use Optime\Util\DependencyInjection\Compiler\AddDoctrineTypesPass;
 use Optime\Util\DependencyInjection\Compiler\AddFormThemePass;
+use Optime\Util\DependencyInjection\Compiler\ConfigureAjaxTwigLoaderPass;
 use Optime\Util\DependencyInjection\Compiler\ConfigureTranslatableListenerPass;
 use Optime\Util\DependencyInjection\Compiler\ConfigureTranslatorRepositoryPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,5 +24,6 @@ class OptimeUtilBundle extends Bundle
         $container->addCompilerPass(new ConfigureTranslatableListenerPass());
         $container->addCompilerPass(new AddFormThemePass());
         $container->addCompilerPass(new AddDoctrineTypesPass());
+        $container->addCompilerPass(new ConfigureAjaxTwigLoaderPass());
     }
 }

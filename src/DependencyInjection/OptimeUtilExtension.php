@@ -33,6 +33,10 @@ class OptimeUtilExtension extends Extension
             'optime.sf_utils.use_translations_extension',
             $config['use_translations_extension']
         );
+        $container->setParameter(
+            'optime.sf_utils.use_ajax_twig_loader',
+            $config['use_ajax_twig_loader']
+        );
 
         $container
             ->getDefinition(AjaxChecker::class)
