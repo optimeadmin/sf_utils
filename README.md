@@ -441,7 +441,7 @@ $.post('url', $form.serialize()).done(html => {
     // Usar el atributo #[HandleAjaxForm] en el controlador.
     // hace que la petición ajax devuelva un statusCode 400
     // cuando el formulario es inválido
-    if (res.status == 400) {
+    if (res.status == 422) {
         // Si es Bad Request, actualizamos html con errores de
         // validación
         $form.html(res.responseText);
@@ -456,7 +456,7 @@ use Optime\Util\Http\Controller\HandleAjaxForm;
 
 #[HandleAjaxForm(
     type: string|null,
-    invalidStatus: Response::HTTP_BAD_REQUEST,
+    invalidStatus: Response::HTTP_UNPROCESSABLE_ENTITY,
     preventRedirect: true,
     replaceRedirectContent: true
 )]

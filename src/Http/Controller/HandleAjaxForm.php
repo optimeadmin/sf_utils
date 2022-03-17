@@ -17,7 +17,7 @@ class HandleAjaxForm
 {
     public function __construct(
         private ?string $type = null,
-        private int $invalidStatus = Response::HTTP_BAD_REQUEST,
+        private int $invalidStatus = Response::HTTP_UNPROCESSABLE_ENTITY,
         private bool $preventRedirect = true,
         private bool $replaceRedirectContent = true,
     ) {

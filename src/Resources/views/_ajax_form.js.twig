@@ -20,7 +20,7 @@ $(function () {
 
             $form.trigger('ajax_form.done');
         }).fail(error => {
-            if (error.status == 400) {
+            if (error.status == 422) {
                 const $parent = $form.parent();
 
                 if ($form.data('ajaxForm')) {
