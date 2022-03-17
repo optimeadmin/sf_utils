@@ -28,6 +28,7 @@ Crear/Ajustar el archivo `config/packages/optime_utils.yaml`:
 optime_util:
     locales: [en, es, pt] # Configuración opcional
     default_locale: "%kernel.default_locale%" # Configuración opcional 
+    use_ajax_twig_loader: false # Si es true, activa el ajax_loader para twig
 ```
 
 <hr>

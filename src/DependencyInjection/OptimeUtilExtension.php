@@ -24,7 +24,11 @@ class OptimeUtilExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new YamlFileLoader(
+            $container,
+            new FileLocator(__DIR__ . '/../Resources/config'),
+            $container->getParameter('kernel.environment'),
+        );
         $loader->load('services.yaml');
 
         $container->setParameter('optime.sf_utils.default_locale', $config['default_locale']);
