@@ -66,15 +66,19 @@ class HandleAjaxFormListener extends AbstractControllerAttributeListener
             $form = $this->getFirstFormByType($forms, $attribute->getType());
         }
 
+        $response = $event->getResponse();
+
+        if ($response->isServerError() || $response->isClientError()) {
+            return;
+        }
+
         if (!$form || !$form->isSubmitted()) {
             return;
         }
 
-        $response = $event->getResponse();
-
-        if (!$form->isValid()) {
+        if (!$form->isValid() && $response->isOk()) {
             $response->setStatusCode($attribute->getInvalidStatus());
-        } elseif ($attribute->isPreventRedirect()) {
+        } elseif ($attribute->isPreventRedirect() && $response->isRedirect()) {
             $event->setResponse(new Response(
                 $attribute->isReplaceRedirectContent()
                     ? 'Ok'
