@@ -6,12 +6,13 @@
 namespace Optime\Util;
 
 use Symfony\Component\Form\FormError;
+use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Manuel Aguirre
  */
-class TranslatableMessage
+class TranslatableMessage implements TranslatableInterface
 {
     public function __construct(
         private string $message,
@@ -67,7 +68,7 @@ class TranslatableMessage
         ] = $data;
     }
 
-    public function trans(TranslatorInterface $translator): string
+    public function trans(TranslatorInterface $translator, string $locale = null): string
     {
         return $translator->trans($this->getMessage(), $this->getMessageParameters(), $this->getDomain());
     }
