@@ -51,6 +51,8 @@ class DefaultLocaleChecker
             if (!$em->getUnitOfWork()->isInIdentityMap($entity)) {
                 // Si es un registro nuevo y no tiene locale definido, le ponemos uno.
                 $entity->setCurrentContentsLocale($defaultLocale);
+            } else {
+                return false;
             }
         }
 
