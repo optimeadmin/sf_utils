@@ -6,6 +6,7 @@
 namespace Optime\Util\Translation;
 
 use Gedmo\Translatable\TranslatableListener as GedmoListener;
+use Optime\Util\Translation\Exception\EntityTranslationsNotEnabledException;
 use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
 
 /**
@@ -14,12 +15,17 @@ use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
 class TranslatableListener
 {
     public function __construct(
+        private bool $enabledExtension,
         private ?GedmoListener $listener = null,
     ) {
     }
 
     public function hasListener(): bool
     {
+        if (!$this->enabledExtension) {
+            throw new EntityTranslationsNotEnabledException();
+        }
+
         return null !== $this->listener;
     }
 
@@ -39,6 +45,10 @@ class TranslatableListener
 
     private function checkTranslationExtension(): void
     {
+        if (!$this->enabledExtension) {
+            throw new EntityTranslationsNotEnabledException();
+        }
+
         if (!$this->hasListener()) {
             throw new EntityTranslationsNotInstalledException();
         }
