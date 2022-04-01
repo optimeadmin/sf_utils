@@ -6,6 +6,7 @@
 namespace Optime\Util\DependencyInjection;
 
 use Optime\Util\Http\Request\AjaxChecker;
+use Optime\Util\Translation\TranslatableListener;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -45,5 +46,8 @@ class OptimeUtilExtension extends Extension
         $container
             ->getDefinition(AjaxChecker::class)
             ->setArgument(1, $config['ajax_check']);
+
+        $container->getDefinition(TranslatableListener::class)
+            ->setArgument(0, $config['use_translations_extension']);
     }
 }
