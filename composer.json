@@ -1,5 +1,5 @@
 {
-  "name": "manuelj555/sf-utils",
+  "name": "optimeconsulting/sf-utils",
   "require": {
     "php": "^8.1",
     "symfony/framework-bundle": "^5.2|^6.0"
