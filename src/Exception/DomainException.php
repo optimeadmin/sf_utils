@@ -7,6 +7,7 @@ namespace Optime\Util\Exception;
 
 use Optime\Util\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function sprintf;
 
 /**
  * @author Manuel Aguirre
@@ -14,7 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class DomainException extends \Exception
 {
     private TranslatableMessage $domainMessage;
-    protected TranslatorInterface|null $translator;
+    protected TranslatorInterface|null $translator = null;
 
     public function __construct($message, ...$replaceValues)
     {
@@ -41,5 +42,17 @@ class DomainException extends \Exception
     public function getDomainMessage(): TranslatableMessage
     {
         return $this->domainMessage;
+    }
+
+    public function trans(): string
+    {
+        if (!$this->translator) {
+            throw new \LogicException(sprintf(
+                "Debe pasar el servicio \"%s\" para poder traducir directamente la exception",
+                TranslatorInterface::class
+            ));
+        }
+
+        return $this->getDomainMessage()->trans($this->translator);
     }
 }
