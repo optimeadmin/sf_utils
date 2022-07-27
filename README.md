@@ -674,3 +674,37 @@ $.get('ajax-page').done(json => {
     console.log(json.list_data); // <table>...</table>
 });
 ```
+
+<hr>
+
+#### `Optime\Util\Http\Request\ArgumentValue\LoadFromRequestContent`
+
+Clase de tipo atributo que permite indicar que queremos cargar los
+datos que vienen de una petición `application/json` en un objeto o un
+array, usando el serializador de Symfony.
+
+##### Ejemplos:
+
+```php
+// Controlador:
+
+use Optime\Util\Http\Request\ArgumentValue\LoadFromRequestContent;
+
+public function actionOne(#[LoadFromRequestContent] array $userData)
+{
+    // es equivalente a:
+    $userData2 = json_decode($request->getContent(), false);
+    ...
+}
+
+public function actionTwo(#[LoadFromRequestContent] UserDataRequest $userData)
+{
+    // es equivalente a:
+    $userData2 = $serializer->deserialize(
+        $request->getContent(),
+        UserDataRequest::class,
+        $request->getContentType() ?? 'json',
+    );
+    ...
+}
+```
