@@ -707,4 +707,21 @@ public function actionTwo(#[LoadFromRequestContent] UserDataRequest $userData)
     );
     ...
 }
+
+/**
+ * Cuando colocar el tipo en el parametro da problemas
+ * (Ejemplo con entidades de doctrine)
+ * Se puede indicar el tipo en el Atributo. 
+ */
+public function actionThree(
+    #[LoadFromRequestContent(UserDataRequest::class)] $userData
+) {
+    // es equivalente a:
+    $userData2 = $serializer->deserialize(
+        $request->getContent(),
+        UserDataRequest::class,
+        $request->getContentType() ?? 'json',
+    );
+    ...
+}
 ```
