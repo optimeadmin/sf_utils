@@ -21,7 +21,7 @@ class TranslatableContentDenormalizer implements ContextAwareDenormalizerInterfa
     {
     }
 
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return $type === TranslatableContent::class;
     }
