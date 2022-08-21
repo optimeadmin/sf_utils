@@ -19,7 +19,9 @@ class Date
 {
     #[ORM\Column(
         name: 'created_at',
+        nullable: true,
         updatable: false,
+        columnDefinition: 'timestamp DEFAULT CURRENT_TIMESTAMP',
     )]
     private DateTimeImmutable $createdAt;
 
