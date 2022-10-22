@@ -39,9 +39,11 @@ class RequestContentValueResolver implements ArgumentValueResolverInterface
             return;
         }
 
+        $attribute = current($argument->getAttributes(LoadFromRequestContent::class));
+
         yield $this->serializer->deserialize(
             $request->getContent(),
-            $argument->getType(),
+            $attribute?->getClass() ?? $argument->getType(),
             $request->getContentType() ?? 'json',
         );
     }

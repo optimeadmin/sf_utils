@@ -17,6 +17,8 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
     private array $values;
     private ?object $target = null;
     private string $defaultLocale;
+    private bool $pending = false;
+    private ?string $property = null;
 
     public function __construct(array $values, string $defaultLocale)
     {
@@ -42,9 +44,29 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
         return new static([$defaultLocale => $value], $defaultLocale);
     }
 
+    public static function pending(object $target, string $property): self
+    {
+        $content = new static([], '');
+        $content->target = $target;
+        $content->property = $property;
+        $content->pending = true;
+
+        return $content;
+    }
+
     public function isEdit(): bool
     {
         return null !== $this->target;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->pending;
+    }
+
+    public function getProperty(): ?string
+    {
+        return $this->property;
     }
 
     public function getValues(): array

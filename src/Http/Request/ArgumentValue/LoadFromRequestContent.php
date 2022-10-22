@@ -15,5 +15,13 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class LoadFromRequestContent
 {
+    public function __construct(
+        private ?string $class = null
+    ) {
+    }
 
+    public function getClass(): ?string
+    {
+        return $this->class;
+    }
 }

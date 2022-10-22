@@ -14,7 +14,7 @@ class AddFormThemePass implements CompilerPassInterface
         }
 
         $resources = $container->getParameter('twig.form.resources');
-        $resources[] = '@OptimeUtil/form.html.twig';
+        array_unshift($resources, '@OptimeUtil/form.html.twig');
         $container->setParameter('twig.form.resources', $resources);
 
 //        if ($container->hasDefinition(TwigRendererEngine::class)) {
