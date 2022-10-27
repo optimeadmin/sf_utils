@@ -120,6 +120,10 @@ Hay ciertas clases de utilidad para trabajar con campos traducibles, enfocado
 a la extensión de traducción de Doctrine pero que puede usarse de forma
 generica.
 
+#### Importante
+
+Para usar las traducciones en entidades, este bundle requiere de las extensiones de doctrine, especificamente la de traducciones, para ello instalar y seguir la documentación del bundle [StofDoctrineExtensionsBundle](https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/index.html).
+
 #### Clases implicadas:
 
 ##### `Optime\Util\Translation\TranslationsAwareInterface`
