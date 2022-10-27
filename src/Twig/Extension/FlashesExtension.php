@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Optime\Util\Twig\Extension;
 
+use Optime\Util\Translation\FlashMessageParser;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use function nl2br;
@@ -18,6 +19,11 @@ use function strip_tags;
  */
 class FlashesExtension extends AbstractExtension
 {
+    public function __construct(
+        private readonly FlashMessageParser $parser
+    ) {
+    }
+
     public function getFilters()
     {
         return [
@@ -27,13 +33,6 @@ class FlashesExtension extends AbstractExtension
 
     public function parseFlash($message, bool $stripTags = true): string
     {
-        if ($stripTags) {
-            $message = strip_tags($message, '<br>');
-        }
-
-        $message = preg_replace('/\*\*(.+?)\*\*/', '<b>$1</b>', $message);
-        $message = preg_replace('/\*(.+?)\*/', '<i>$1</i>', $message);
-
-        return nl2br($message);
+        return $this->parser->parse($message, $stripTags);
     }
 }
