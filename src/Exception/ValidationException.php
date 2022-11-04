@@ -13,6 +13,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function sprintf;
 
 /**
  * @author Manuel Aguirre
@@ -70,6 +71,24 @@ class ValidationException extends DomainException
     public function getFieldError(): string
     {
         return $this->error?->getPropertyPath() ?? $this->errorPath ?? '';
+    }
+
+    public function toArray(TranslatorInterface $translator = null): array
+    {
+        $translator = $translator ?: $this->translator;
+
+        if (!$translator) {
+            throw new \LogicException(sprintf(
+                "Debe pasar el servicio \"%s\" para poder convertir el error en un array",
+                TranslatorInterface::class
+            ));
+        }
+
+        return [
+            'error' => $this->getDomainMessage()->trans($translator),
+            'field' => $this->getFieldError(),
+            'error_path' => $this->errorPath,
+        ];
     }
 
     public function toFormError(TranslatorInterface $translator = null): FormError
