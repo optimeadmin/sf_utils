@@ -39,6 +39,9 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('use_ajax_twig_loader')
                     ->defaultFalse()
                 ->end()
+                ->booleanNode('use_form_error_normalizer')
+                    ->defaultTrue()
+                ->end()
             ->end();
 
         return $treeBuilder;

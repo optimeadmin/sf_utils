@@ -6,6 +6,7 @@
 namespace Optime\Util\DependencyInjection;
 
 use Optime\Util\Http\Request\AjaxChecker;
+use Optime\Util\Serializer\Normalizer\FormErrorNormalizer;
 use Optime\Util\Translation\TranslatableListener;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -49,5 +50,9 @@ class OptimeUtilExtension extends Extension
 
         $container->getDefinition(TranslatableListener::class)
             ->setArgument(0, $config['use_translations_extension']);
+
+        if (!$config['use_form_error_normalizer']) {
+            $container->removeDefinition(FormErrorNormalizer::class);
+        }
     }
 }
