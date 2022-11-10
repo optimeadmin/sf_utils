@@ -44,15 +44,17 @@ class DomainException extends \Exception
         return $this->domainMessage;
     }
 
-    public function trans(): string
+    public function trans(TranslatorInterface $translator = null): string
     {
-        if (!$this->translator) {
+        $translator ??= $this->translator;
+
+        if (!$translator) {
             throw new \LogicException(sprintf(
                 "Debe pasar el servicio \"%s\" para poder traducir directamente la exception",
                 TranslatorInterface::class
             ));
         }
 
-        return $this->getDomainMessage()->trans($this->translator);
+        return $this->getDomainMessage()->trans($translator);
     }
 }

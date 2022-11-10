@@ -82,7 +82,7 @@ class ValidationException extends DomainException
 
     public function toArray(bool $indexed = false, TranslatorInterface $translator = null): array
     {
-        $translator = $translator ?: $this->translator;
+        $translator ??= $this->translator;
 
         if (!$translator) {
             throw new \LogicException(sprintf(
@@ -102,7 +102,7 @@ class ValidationException extends DomainException
 
     public function toFormError(TranslatorInterface $translator = null): FormError
     {
-        $translator = $translator ?: $this->translator;
+        $translator ??= $this->translator;
 
         if (!$translator) {
             throw new \LogicException(sprintf(
@@ -116,7 +116,7 @@ class ValidationException extends DomainException
 
     public function addFormError(FormInterface $form, TranslatorInterface $translator = null): void
     {
-        $translator = $translator ?: $this->translator;
+        $translator ??= $this->translator;
 
         if (!$translator) {
             throw new \LogicException(sprintf(
