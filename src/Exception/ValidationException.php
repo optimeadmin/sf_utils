@@ -20,6 +20,7 @@ use function sprintf;
  */
 class ValidationException extends DomainException
 {
+    private ?ConstraintViolationListInterface $errors = null;
     private null|ConstraintViolationInterface|ConstraintViolation $error = null;
     private string $errorPath;
 
@@ -37,6 +38,7 @@ class ValidationException extends DomainException
             $translator,
         );
         $exception->error = $error;
+        $exception->errors = $errors;
 
         return $exception;
     }
@@ -66,6 +68,11 @@ class ValidationException extends DomainException
     public function getError(): ConstraintViolation|ConstraintViolationInterface|null
     {
         return $this->error;
+    }
+
+    public function getErrors(): ?ConstraintViolationListInterface
+    {
+        return $this->errors;
     }
 
     public function getFieldError(): string
