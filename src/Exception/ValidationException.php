@@ -73,7 +73,7 @@ class ValidationException extends DomainException
         return $this->error?->getPropertyPath() ?? $this->errorPath ?? '';
     }
 
-    public function toArray(TranslatorInterface $translator = null): array
+    public function toArray(bool $indexed = false, TranslatorInterface $translator = null): array
     {
         $translator = $translator ?: $this->translator;
 
@@ -84,11 +84,13 @@ class ValidationException extends DomainException
             ));
         }
 
-        return [
+        $error = [
             'error' => $this->getDomainMessage()->trans($translator),
             'field' => $this->getFieldError(),
             'error_path' => $this->errorPath,
         ];
+
+        return $indexed ? [$this->getFieldError() => $error] : $error;
     }
 
     public function toFormError(TranslatorInterface $translator = null): FormError
