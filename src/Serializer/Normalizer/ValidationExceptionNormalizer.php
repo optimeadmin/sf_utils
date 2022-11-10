@@ -28,7 +28,7 @@ class ValidationExceptionNormalizer implements ContextAwareNormalizerInterface
 
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
-        return $data instanceof ValidationException && $data->getErrors();
+        return $data instanceof ValidationException;
     }
 
     public function normalize(mixed $object, string $format = null, array $context = [])

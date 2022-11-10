@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use function sprintf;
@@ -23,6 +24,11 @@ class ValidationException extends DomainException
     private ?ConstraintViolationListInterface $errors = null;
     private null|ConstraintViolationInterface|ConstraintViolation $error = null;
     private string $errorPath;
+
+    private function __construct($message, ...$replaceValues)
+    {
+        parent::__construct($message, $replaceValues);
+    }
 
     public static function fromValidationErrors(
         ConstraintViolationListInterface $errors,
@@ -70,9 +76,18 @@ class ValidationException extends DomainException
         return $this->error;
     }
 
-    public function getErrors(): ?ConstraintViolationListInterface
+    public function getErrors(): ConstraintViolationListInterface
     {
-        return $this->errors;
+        return $this->errors ??= new ConstraintViolationList([
+            new ConstraintViolation(
+                $this->getDomainMessage()->getMessage(),
+                $this->getDomainMessage()->getMessage(),
+                $this->getDomainMessage()->getMessageParameters(),
+                null,
+                $this->errorPath,
+                null,
+            )
+        ]);
     }
 
     public function getFieldError(): string
