@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Optime\Util\Serializer\Attribute\DeserializeObject;
 use Optime\Util\Serializer\DeserializeObjectsAwareInterface;
 use ReflectionClass;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
@@ -24,6 +25,7 @@ use function is_subclass_of;
 /**
  * @author Manuel Aguirre
  */
+#[AutoconfigureTag("serializer.normalizer", ['priority' => 10])]
 class RequestObjectDenormalizer implements ContextAwareDenormalizerInterface, DenormalizerAwareInterface
 {
     use DenormalizerAwareTrait;
