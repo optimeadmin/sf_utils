@@ -36,7 +36,7 @@ class RequestObjectDenormalizer implements ContextAwareDenormalizerInterface, De
     ) {
     }
 
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         if (isset($context[self::DENORMALIZING])) {
             return false;
