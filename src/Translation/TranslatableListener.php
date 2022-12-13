@@ -8,16 +8,25 @@ namespace Optime\Util\Translation;
 use Gedmo\Translatable\TranslatableListener as GedmoListener;
 use Optime\Util\Translation\Exception\EntityTranslationsNotEnabledException;
 use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
  * @author Manuel Aguirre
  */
-class TranslatableListener
+class TranslatableListener implements ServiceSubscriberInterface
 {
     public function __construct(
         private bool $enabledExtension,
-        private ?GedmoListener $listener = null,
+        private ContainerInterface $container,
     ) {
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return [
+            '?' . GedmoListener::class,
+        ];
     }
 
     public function hasListener(): bool
@@ -52,5 +61,14 @@ class TranslatableListener
         if (!$this->hasListener()) {
             throw new EntityTranslationsNotInstalledException();
         }
+    }
+
+    private function getGedmoListener(): ?GedmoListener
+    {
+        if (!$this->container->has(GedmoListener::class)) {
+            return null;
+        }
+
+        return $this->container->get(GedmoListener::class);
     }
 }
