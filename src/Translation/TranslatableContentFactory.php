@@ -7,19 +7,32 @@ namespace Optime\Util\Translation;
 
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
  * @author Manuel Aguirre
  */
-class TranslatableContentFactory
+class TranslatableContentFactory implements ServiceSubscriberInterface
 {
     public function __construct(
         private PropertyAccessorInterface $propertyAccessor,
         private LocalesProviderInterface $localesProvider,
         private DefaultLocaleChecker $defaultLocaleChecker,
-        private ?TranslationRepository $translationRepository,
+        private ContainerInterface $container,
     ) {
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        /* Se obtiene el repositorio de esta forma para evitar
+         * posibles errores de referencias circulares si
+         * se llegan a usar estos servicios en listeners de doctrine.         *
+         */
+        return [
+            '?' . TranslationRepository::class,
+        ];
     }
 
     public function newInstance(array $contents = []): TranslatableContent
@@ -42,11 +55,14 @@ class TranslatableContentFactory
     {
         $this->defaultLocaleChecker->throwOnInvalidLocale($entity);
 
-        if (!$this->translationRepository) {
+        if (!$this->container->has(TranslationRepository::class)) {
             throw new EntityTranslationsNotInstalledException();
         }
 
-        $translations = $this->translationRepository->findTranslations($entity);
+        $translations = $this->container
+            ->get(TranslationRepository::class)
+            ->findTranslations($entity);
+
         $contents = [];
 
         foreach ($translations as $locale => $translation) {

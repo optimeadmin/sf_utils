@@ -27,7 +27,7 @@ class DefaultLocaleChecker implements ServiceSubscriberInterface
 
     public static function getSubscribedServices(): array
     {
-        /* Se obtiene el listener de esta forma para evitar
+        /* Se obtiene el registry de esta forma para evitar
          * posibles errores de referencias circulares si
          * se llegan a usar estos servicios en listeners de doctrine.         *
          */
