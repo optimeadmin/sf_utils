@@ -24,6 +24,10 @@ class TranslatableListener implements ServiceSubscriberInterface
 
     public static function getSubscribedServices(): array
     {
+        /* Se obtiene el listener de esta forma para evitar
+         * posibles errores de referencias circulares si
+         * se llegan a usar estos servicios en listeners de doctrine.         *
+         */
         return [
             '?' . GedmoListener::class,
         ];
@@ -35,21 +39,21 @@ class TranslatableListener implements ServiceSubscriberInterface
             throw new EntityTranslationsNotEnabledException();
         }
 
-        return null !== $this->listener;
+        return null !== $this->getGedmoListener();
     }
 
     public function setTranslatableLocale(string $locale): void
     {
         $this->checkTranslationExtension();
 
-        $this->listener->setTranslatableLocale($locale);
+        $this->getGedmoListener()->setTranslatableLocale($locale);
     }
 
     public function getListenerLocale(): string
     {
         $this->checkTranslationExtension();
 
-        return $this->listener->getListenerLocale();
+        return $this->getGedmoListener()->getListenerLocale();
     }
 
     private function checkTranslationExtension(): void
