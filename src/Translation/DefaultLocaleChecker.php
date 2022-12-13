@@ -9,18 +9,27 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Optime\Util\Translation\Exception\EntityNotLoadedInDefaultLocaleException;
 use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use function get_class;
 
 /**
  * @author Manuel Aguirre
  */
-class DefaultLocaleChecker
+class DefaultLocaleChecker implements ServiceSubscriberInterface
 {
     public function __construct(
         private LocalesProviderInterface $localesProvider,
-        private ManagerRegistry $managerRegistry,
         private TranslatableListener $listener,
+        private ContainerInterface $container,
     ) {
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return [
+            ManagerRegistry::class,
+        ];
     }
 
     public function throwOnInvalidLocale(TranslationsAwareInterface $entity): void
@@ -46,7 +55,7 @@ class DefaultLocaleChecker
 
         if (null === $entity->getCurrentContentsLocale()) {
             /** @var EntityManagerInterface $em */
-            $em = $this->managerRegistry->getManagerForClass(get_class($entity));
+            $em = $this->getManagerRegistry()->getManagerForClass(get_class($entity));
 
             if (!$em->getUnitOfWork()->isInIdentityMap($entity)) {
                 // Si es un registro nuevo y no tiene locale definido, le ponemos uno.
@@ -66,5 +75,10 @@ class DefaultLocaleChecker
         if (!$this->listener->hasListener()) {
             throw new EntityTranslationsNotInstalledException();
         }
+    }
+
+    private function getManagerRegistry(): ManagerRegistry
+    {
+        return $this->container->get(ManagerRegistry::class);
     }
 }
