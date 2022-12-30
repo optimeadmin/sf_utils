@@ -6,6 +6,7 @@
 namespace Optime\Util\Entity\Traits;
 
 use Doctrine\ORM\Mapping\Column;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -13,6 +14,7 @@ use Symfony\Component\Uid\Uuid;
  */
 trait ExternalUuidTrait
 {
+    #[Groups("Uuid")]
     #[Column(name: 'uuid', type: 'string_uuid', unique: true, insertable: true, updatable: false)]
     private Uuid $uuid;
 
