@@ -30,6 +30,8 @@ class FormErrorNormalizer implements ContextAwareNormalizerInterface
         return [
             'message' => $object->getMessage(),
             'cause' => $object->getCause(),
+            'propertyPath' => $object->getOrigin()?->getName(),
+            'fullPath' => $object->getOrigin()?->getPropertyPath(),
         ];
     }
 }
