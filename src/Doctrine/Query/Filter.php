@@ -48,6 +48,15 @@ class Filter
         return $this;
     }
 
+    public function staticWhere(string|array $conditions): self
+    {
+        if ($this->hasValue()) {
+            $this->query->andWhere($this->query->expr()->orX(...(array)$conditions));
+        }
+
+        return $this;
+    }
+
     public function like(string|array $fields): self
     {
         if ($this->hasValue()) {
@@ -61,10 +70,19 @@ class Filter
         return $this;
     }
 
-    public function join(string $join, string $alias): self
+    public function join(string $join, string $alias, $conditionType = null, $condition = null, $indexBy = null): self
     {
         if ($this->hasValue()) {
-            $this->query->join($join, $alias);
+            $this->query->join($join, $alias, $conditionType, $condition, $indexBy);
+        }
+
+        return $this;
+    }
+
+    public function setParameter($key, $value, $type = null): self
+    {
+        if ($this->hasValue()) {
+            $this->query->setParameter($key, $value, $type);
         }
 
         return $this;
