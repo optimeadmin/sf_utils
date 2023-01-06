@@ -70,10 +70,29 @@ class Filter
         return $this;
     }
 
-    public function join(string $join, string $alias, $conditionType = null, $condition = null, $indexBy = null): self
-    {
+    public function join(
+        string $join,
+        string $alias,
+        $conditionType = null,
+        $condition = null,
+        $indexBy = null
+    ): self {
         if ($this->hasValue()) {
             $this->query->join($join, $alias, $conditionType, $condition, $indexBy);
+        }
+
+        return $this;
+    }
+
+    public function leftJoin(
+        string $join,
+        string $alias,
+        $conditionType = null,
+        $condition = null,
+        $indexBy = null
+    ): self {
+        if ($this->hasValue()) {
+            $this->query->leftJoin($join, $alias, $conditionType, $condition, $indexBy);
         }
 
         return $this;
