@@ -11,7 +11,10 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use function array_filter;
 use function count;
+use function dump;
 use function is_array;
+use function strlen;
+use function trim;
 
 /**
  * @author Manuel Aguirre
@@ -19,6 +22,7 @@ use function is_array;
 class Filter
 {
     private static int $paramIndex = 0;
+    private ?bool $hasValue = null;
 
     public function __construct(
         private readonly QueryBuilder $query,
@@ -115,11 +119,15 @@ class Filter
 
     private function hasValue(): bool
     {
-        if (is_array($this->value)) {
-            return count(array_filter($this->value)) > 0;
+        if (null !== $this->hasValue) {
+            return $this->hasValue;
         }
 
-        return $this->value && trim((string)$this->value) > 0;
+        if (is_array($this->value)) {
+            return $this->hasValue = count(array_filter($this->value)) > 0;
+        }
+        
+        return $this->hasValue = null !== $this->value && strlen(trim((string)$this->value)) > 0;
     }
 
     public function buildConditions(string|array $conditions, callable $func): array
