@@ -7,6 +7,8 @@ namespace Optime\Util\Translation;
 
 use JsonSerializable;
 use Optime\Util\Entity\Language;
+use Optime\Util\Translation\Exception\ErrorLoadingPendingContentsException;
+use Optime\Util\Translation\Exception\PendingContentsException;
 use Traversable;
 
 /**
@@ -71,6 +73,8 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
 
     public function getValues(): array
     {
+        $this->checkPending();
+
         return $this->values;
     }
 
@@ -81,11 +85,15 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
 
     public function byLocale(string $locale): ?string
     {
+        $this->checkPending();
+
         return $this->values[$locale] ?? null;
     }
 
     public function hasLocale(string $locale): bool
     {
+        $this->checkPending();
+
         return array_key_exists($locale, $this->values);
     }
 
@@ -106,6 +114,29 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
 
     public function jsonSerialize(): mixed
     {
+        $this->checkPending();
+
         return $this->getValues();
+    }
+
+    public function loadIfApply(Translation $translation): void
+    {
+        if ($this->isPending()) {
+            if (!$this->getTarget()) {
+                throw new ErrorLoadingPendingContentsException($this);
+            }
+
+            $contents = $translation->loadContent($this->getTarget(), $this->getProperty());
+            $this->setValues($contents->getValues());
+            $this->defaultLocale = $contents->defaultLocale;
+            $this->pending = false;
+        }
+    }
+
+    private function checkPending(): void
+    {
+        if ($this->isPending()) {
+            throw new PendingContentsException($this);
+        }
     }
 }
