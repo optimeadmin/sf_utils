@@ -119,20 +119,6 @@ class TranslatableContent implements \IteratorAggregate, JsonSerializable
         return $this->getValues();
     }
 
-    public function loadIfApply(Translation $translation): void
-    {
-        if ($this->isPending()) {
-            if (!$this->getTarget()) {
-                throw new ErrorLoadingPendingContentsException($this);
-            }
-
-            $contents = $translation->loadContent($this->getTarget(), $this->getProperty());
-            $this->setValues($contents->getValues());
-            $this->defaultLocale = $contents->defaultLocale;
-            $this->pending = false;
-        }
-    }
-
     private function checkPending(): void
     {
         if ($this->isPending()) {
