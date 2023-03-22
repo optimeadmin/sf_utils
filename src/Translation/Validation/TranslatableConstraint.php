@@ -16,5 +16,15 @@ use Symfony\Component\Validator\Constraints\All;
 #[Attribute]
 class TranslatableConstraint extends All
 {
+    public string $errorsPath;
 
+    public function __construct(
+        mixed $constraints = null,
+        string $errorsPath = 'values',
+        array $groups = null,
+        mixed $payload = null,
+    ) {
+        parent::__construct($constraints, $groups, $payload);
+        $this->errorsPath = $errorsPath;
+    }
 }

@@ -46,13 +46,13 @@ class TranslatableConstraintValidator extends ConstraintValidator
 
     private function doValidate(
         TranslatableContent $value,
-        Constraint $constraint
+        TranslatableConstraint $constraint
     ): void {
         $validator = $this->context->getValidator()->inContext($this->context);
 
         foreach ($this->localesProvider->getLocales() as $locale) {
             $validator
-                ->atPath('values[' . $locale . ']')
+                ->atPath($constraint->errorsPath . '[' . $locale . ']')
                 ->validate($value->byLocale($locale), $constraint->constraints);
         }
     }
