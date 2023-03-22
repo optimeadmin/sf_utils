@@ -18,7 +18,7 @@ class PendingContentsException extends \LogicException
     public function __construct(TranslatableContent $content)
     {
         parent::__construct(sprintf(
-            'Los contenidos de %s::%s no están cargados aún',
+            'La traduccion de %s::%s es una traduccion pendiente y no se puede leer',
             $content->getTarget()::class,
             $content->getProperty(),
         ));
