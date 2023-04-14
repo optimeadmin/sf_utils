@@ -7,10 +7,14 @@ declare(strict_types=1);
 
 namespace Optime\Util\Serializer\Normalizer;
 
+use ArrayObject;
 use Optime\Util\Translation\DefaultLocaleEntityRefresh;
 use Optime\Util\Translation\TranslatableContent;
 use Optime\Util\Translation\TranslatableContentFactory;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
+use function count;
+use function dump;
+use function json_encode;
 
 /**
  * @author Manuel Aguirre
@@ -46,6 +50,12 @@ class TranslatableContentNormalizer implements ContextAwareNormalizerInterface
             );
         }
 
-        return $object->jsonSerialize();
+        $data = $object->jsonSerialize();
+
+        if (0 === count($data)) {
+            return null;
+        }
+
+        return $data;
     }
 }
