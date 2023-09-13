@@ -29,6 +29,10 @@ class AjaxChecker
 
         $request ??= $this->requestStack->getMainRequest();
 
+        if (!$request) {
+            return $this->cachedResult = false;
+        }
+
         if ($request->isXmlHttpRequest()) {
             return $this->cachedResult = true;
         }
