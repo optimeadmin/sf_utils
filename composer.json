@@ -7,7 +7,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Optime\\Util\\": "src"
+      "Optime\\Util\\": "src/"
     }
   }
 }

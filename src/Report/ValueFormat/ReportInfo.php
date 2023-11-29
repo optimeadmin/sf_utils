@@ -24,15 +24,7 @@ class ReportInfo
         $this->title->textBold();
         $this->setGeneratedAt(new DateTimeImmutable());
     }
-
-    public static function noPrint(): self
-    {
-        $info = new self(new StringFormat(''));
-        $info->cancelPrint();
-
-        return $info;
-    }
-
+    
     public function getRowsCount(): int
     {
         if (!$this->canBePrinted()) {
