@@ -9,6 +9,7 @@ use LogicException;
 use Optime\Util\Report\TableReportInterface;
 use Optime\Util\Report\TabsReportInterface;
 use Optime\Util\Report\ValueFormat\DateFormat;
+use Optime\Util\Report\ValueFormat\HeaderFormat;
 use Optime\Util\Report\ValueFormat\ReportInfo;
 use Optime\Util\Report\ValueFormat\StringFormat;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -16,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_flip;
 use function array_keys;
 use function class_exists;
+use function dd;
 use function gettype;
 use function is_object;
 use function sprintf;
@@ -67,6 +69,8 @@ class ReportGenerator
         $reportInfo = new ReportInfo(new StringFormat("Report"));
         $report->configureInfo($reportInfo);
 
+        $this->configHeadersFromInfo($reportInfo, $headers);
+
         if (null !== $reportInfo->getTabName()) {
             $sheet->setTitle($reportInfo->getTabName());
         }
@@ -75,7 +79,7 @@ class ReportGenerator
             $this->fillReportInfo($sheet, $reportInfo);
         }
 
-        $row = $reportInfo->canBePrinted() ? $reportInfo->getRowsCount() + 2 : 1;
+        $row = $reportInfo->getRowsCount();
 
         $sheet->getRowDimension($row)->setRowHeight(30);
 
@@ -135,4 +139,15 @@ class ReportGenerator
         return new Spreadsheet();
     }
 
+    private function configHeadersFromInfo(ReportInfo $reportInfo, array $headers): void
+    {
+        if ($bgColor = $reportInfo->getHeadersBgColor()) {
+            /** @var HeaderFormat $header */
+            foreach ($headers as $header) {
+                if (!$header->getBgColor()) {
+                    $header->bgColor($bgColor);
+                }
+            }
+        }
+    }
 }

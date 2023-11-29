@@ -17,21 +17,28 @@ class ReportInfo
     private DateTimeImmutable $generatedAt;
     private array $subtitles = [];
     private ?string $tabName = null;
+    private ?string $headersBgColor = null;
     private bool $print = true;
+    private int $minRowsCount = 0;
 
     public function __construct(private StringFormat $title)
     {
         $this->title->textBold();
         $this->setGeneratedAt(new DateTimeImmutable());
     }
-    
+
     public function getRowsCount(): int
     {
         if (!$this->canBePrinted()) {
-            return 0;
+            return $this->minRowsCount + 1;
         }
 
-        return 2 + count($this->subtitles);
+        return 2 + count($this->subtitles) + $this->minRowsCount;
+    }
+
+    public function setMinRowsCount(int $minRowsCount): void
+    {
+        $this->minRowsCount = $minRowsCount;
     }
 
     public function setSubtitles(array $subtitles): void
@@ -85,5 +92,15 @@ class ReportInfo
     public function getTabName(): ?string
     {
         return $this->tabName;
+    }
+
+    public function setHeadersBgColor(?string $headersBgColor): void
+    {
+        $this->headersBgColor = $headersBgColor;
+    }
+
+    public function getHeadersBgColor(): ?string
+    {
+        return $this->headersBgColor;
     }
 }

@@ -19,6 +19,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\UrlHelper;
+use function dd;
 use const PHP_EOL;
 
 /**
@@ -48,7 +49,7 @@ class ReportGenerationUtils
         }
 
         if ($value instanceof HeaderFormat) {
-            $this->applyHeaderFormat($cell);
+            $this->applyHeaderFormat($cell, $value);
             return;
         }
 
@@ -68,6 +69,15 @@ class ReportGenerationUtils
         if (null !== $value->getColor()) {
             $cell->getStyle()->getFont()->setColor(new Color($value->getColor()));
         }
+
+        if (null !== $value->getBgColor()) {
+            $cell->getStyle()->getFill()->applyFromArray([
+                'fillType' => Fill::FILL_SOLID,
+                'color' => [
+                    'argb' => $value->getBgColor(),
+                ]
+            ]);
+        }
     }
 
     public function writeIn(Worksheet $sheet, int $col, int $row, StringFormat $value): void
@@ -86,7 +96,7 @@ class ReportGenerationUtils
         }
     }
 
-    public function applyHeaderFormat(Cell $cell): void
+    public function applyHeaderFormat(Cell $cell, HeaderFormat $value): void
     {
         $cell->getStyle()->applyFromArray([
             'font' => [
@@ -104,7 +114,7 @@ class ReportGenerationUtils
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
                 'color' => [
-                    'argb' => 'A6A6A6',
+                    'argb' => $value->getBgColor() ?? 'A6A6A6',
                 ],
             ],
         ]);

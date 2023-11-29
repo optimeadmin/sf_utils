@@ -12,6 +12,7 @@ class StringFormat
 {
     private bool $bold = false;
     private ?string $color = null;
+    private ?string $bgColor = null;
 
     public function __construct(private $value, private readonly bool $centered = false)
     {
@@ -45,6 +46,13 @@ class StringFormat
         return $this;
     }
 
+    public function bgColor(string $bgColor): self
+    {
+        $this->bgColor = $bgColor;
+
+        return $this;
+    }
+
     public function isBold(): bool
     {
         return $this->bold;
@@ -53,5 +61,10 @@ class StringFormat
     public function getColor(): ?string
     {
         return $this->color;
+    }
+
+    public function getBgColor(): ?string
+    {
+        return $this->bgColor;
     }
 }

@@ -10,12 +10,12 @@ namespace Optime\Util\Report\ValueFormat;
  */
 class HeaderFormat extends StringFormat
 {
-    private ?int $width;
-
-    public function __construct($value, bool $centered = true, int $width = null)
-    {
+    public function __construct(
+        $value,
+        bool $centered = true,
+        private readonly ?int $width = null,
+    ) {
         parent::__construct($value, $centered);
-        $this->width = $width;
     }
 
     public function getWidth(): ?int
