@@ -5,6 +5,7 @@
 
 namespace Optime\Util\Report\Excel;
 
+use Optime\Util\Report\ValueFormat\CallbackFormat;
 use Optime\Util\Report\ValueFormat\HeaderFormat;
 use Optime\Util\Report\ValueFormat\HtmlFormat;
 use Optime\Util\Report\ValueFormat\LinkFormat;
@@ -19,7 +20,6 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\UrlHelper;
-use function dd;
 use const PHP_EOL;
 
 /**
@@ -44,6 +44,12 @@ class ReportGenerationUtils
         if ($value instanceof HtmlFormat) {
             $cell->setValue($value->getRichText());
             $cell->getStyle()->getAlignment()->setVertical(Alignment::VERTICAL_TOP);
+        } elseif ($value instanceof CallbackFormat) {
+            $value($cell);
+
+            if (null === $cell->getValue()) {
+                return;
+            }
         } else {
             $cell->setValue($value);
         }
