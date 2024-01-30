@@ -14,7 +14,7 @@ use function count;
  */
 class ReportInfo
 {
-    private DateTimeImmutable $generatedAt;
+    private ?DateTimeImmutable $generatedAt = null;
     private array $subtitles = [];
     private ?string $tabName = null;
     private ?string $headersBgColor = null;
@@ -33,7 +33,9 @@ class ReportInfo
             return $this->minRowsCount + 1;
         }
 
-        return 2 + count($this->subtitles) + $this->minRowsCount;
+        $minRows = $this->getGeneratedAt() ? 3 : 2;
+
+        return $minRows + count($this->subtitles) + $this->minRowsCount;
     }
 
     public function setMinRowsCount(int $minRowsCount): void
@@ -64,12 +66,12 @@ class ReportInfo
         return $this->title;
     }
 
-    public function setGeneratedAt(DateTimeImmutable $generatedAt): void
+    public function setGeneratedAt(?DateTimeImmutable $generatedAt): void
     {
         $this->generatedAt = $generatedAt;
     }
 
-    public function getGeneratedAt(): DateTimeImmutable
+    public function getGeneratedAt(): ?DateTimeImmutable
     {
         return $this->generatedAt;
     }

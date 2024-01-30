@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_flip;
 use function array_keys;
 use function class_exists;
+use function dd;
 use function gettype;
 use function is_object;
 use function sprintf;
@@ -121,9 +122,11 @@ class ReportGenerator
             $this->reportUtils->writeIn($sheet, 1, $row++, $subtitle);
         }
 
-        $this->reportUtils->writeIn($sheet, 1, $row++, new StringFormat(
-            'Date: ' . (new DateFormat($reportInfo->getGeneratedAt()))
-        ));
+        if ($date = $reportInfo->getGeneratedAt()) {
+            $this->reportUtils->writeIn($sheet, 1, $row++, new StringFormat(
+                'Date: ' . (new DateFormat($date))
+            ));
+        }
     }
 
     /**
