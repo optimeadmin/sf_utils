@@ -17,7 +17,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_flip;
 use function array_keys;
 use function class_exists;
-use function dd;
 use function gettype;
 use function is_object;
 use function sprintf;
@@ -101,9 +100,9 @@ class ReportGenerator
 
         foreach ($rowData as $index => $value) {
             if (null === $indexes) {
-                $cell = $sheet->getCellByColumnAndRow($col++, $row);
+                $cell = $sheet->getCell([$col++, $row]);
             } elseif (isset($indexes[$index])) {
-                $cell = $sheet->getCellByColumnAndRow($indexes[$index] + 1, $row);
+                $cell = $sheet->getCell([$indexes[$index] + 1, $row]);
             } else {
                 continue;
             }

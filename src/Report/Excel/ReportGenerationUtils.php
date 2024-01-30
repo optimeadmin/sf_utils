@@ -98,7 +98,7 @@ class ReportGenerationUtils
 
     public function writeIn(Worksheet $sheet, int $col, int $row, StringFormat $value): void
     {
-        $this->writeCell($sheet, $sheet->getCellByColumnAndRow($col, $row), $value);
+        $this->writeCell($sheet, $sheet->getCell([$col, $row]), $value);
     }
 
     public function adjustColumnWidths(Worksheet $sheet, iterable $headers, int $from = 1): void
