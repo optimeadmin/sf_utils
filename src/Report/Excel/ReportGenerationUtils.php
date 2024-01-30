@@ -20,6 +20,8 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\UrlHelper;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use const PHP_EOL;
 
 /**
@@ -28,8 +30,9 @@ use const PHP_EOL;
 class ReportGenerationUtils
 {
     public function __construct(
-        private Packages $packages,
-        private UrlHelper $urlHelper
+        private readonly Packages $packages,
+        private readonly UrlHelper $urlHelper,
+        private readonly ?TranslatorInterface $translator,
     ) {
     }
 
@@ -51,7 +54,14 @@ class ReportGenerationUtils
                 return;
             }
         } else {
-            $cell->setValue($value);
+            $content = $value->getValue();
+
+            if ($content instanceof TranslatableInterface && $this->translator) {
+                $cell->setValue($content->trans($this->translator));
+            } else {
+                $cell->setValue($content);
+            }
+
         }
 
         if ($value instanceof HeaderFormat) {

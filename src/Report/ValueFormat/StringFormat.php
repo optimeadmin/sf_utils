@@ -5,6 +5,8 @@
 
 namespace Optime\Util\Report\ValueFormat;
 
+use Symfony\Contracts\Translation\TranslatableInterface;
+
 /**
  * @author Manuel Aguirre
  */
@@ -16,12 +18,19 @@ class StringFormat
 
     public function __construct(private $value, private readonly bool $centered = false)
     {
-        $this->value = (string)$this->value;
+        if (!$this->value instanceof TranslatableInterface) {
+            $this->value = (string)$this->value;
+        }
     }
 
     public function __toString()
     {
         return (string)$this->value;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
     }
 
     /**
