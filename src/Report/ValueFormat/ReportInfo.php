@@ -18,6 +18,7 @@ class ReportInfo
     private array $subtitles = [];
     private ?string $tabName = null;
     private ?string $headersBgColor = null;
+    private ?string $headersColor = null;
     private bool $print = true;
     private int $minRowsCount = 0;
 
@@ -104,5 +105,15 @@ class ReportInfo
     public function getHeadersBgColor(): ?string
     {
         return $this->headersBgColor;
+    }
+
+    public function setHeadersColor(?string $headersColor): void
+    {
+        $this->headersColor = $headersColor;
+    }
+
+    public function getHeadersColor(): ?string
+    {
+        return $this->headersColor;
     }
 }

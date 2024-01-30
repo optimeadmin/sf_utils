@@ -17,7 +17,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_flip;
 use function array_keys;
 use function class_exists;
-use function dd;
 use function gettype;
 use function is_object;
 use function sprintf;
@@ -148,6 +147,14 @@ class ReportGenerator
             foreach ($headers as $header) {
                 if (!$header->getBgColor()) {
                     $header->bgColor($bgColor);
+                }
+            }
+        }
+        if ($color = $reportInfo->getHeadersColor()) {
+            /** @var HeaderFormat $header */
+            foreach ($headers as $header) {
+                if (!$header->getColor()) {
+                    $header->color($color);
                 }
             }
         }
