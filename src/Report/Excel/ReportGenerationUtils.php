@@ -114,12 +114,14 @@ class ReportGenerationUtils
 
     public function applyHeaderFormat(Cell $cell, HeaderFormat $value): void
     {
-        $cell->getStyle()->applyFromArray([
+        $style = $cell->getStyle();
+
+        $style->applyFromArray([
             'font' => [
                 'bold' => true,
             ],
             'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'horizontal' => $value->isCentered() ? Alignment::HORIZONTAL_CENTER : Alignment::HORIZONTAL_LEFT,
                 'vertical' => Alignment::VERTICAL_CENTER,
             ],
             'borders' => [
@@ -134,6 +136,10 @@ class ReportGenerationUtils
                 ],
             ],
         ]);
+
+        if (null !== $value->getColor()) {
+            $style->getFont()->setColor(new Color($value->getColor()));
+        }
     }
 
     public function applyLinkFormat(Cell $cell): void
