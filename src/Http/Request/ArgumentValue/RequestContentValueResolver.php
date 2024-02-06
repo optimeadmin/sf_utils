@@ -10,6 +10,7 @@ namespace Optime\Util\Http\Request\ArgumentValue;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use function json_decode;
 
@@ -35,16 +36,24 @@ class RequestContentValueResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if ($argument->getType() === 'array') {
-            yield json_decode($request->getContent(), true);
+            yield $request->request->count() ? $request->request->all() : json_decode($request->getContent(), true);
             return;
         }
 
         $attribute = current($argument->getAttributes(LoadFromRequestContent::class));
 
-        yield $this->serializer->deserialize(
-            $request->getContent(),
-            $attribute?->getClass() ?? $argument->getType(),
-            $request->getContentType() ?? 'json',
-        );
+        if ($request->request->count() && $this->serializer instanceof Serializer) {
+            yield $this->serializer->denormalize(
+                $request->request->all(),
+                $attribute?->getClass() ?? $argument->getType(),
+                $request->getContentType() ?? 'json',
+            );
+        } else {
+            yield $this->serializer->deserialize(
+                $request->getContent(),
+                $attribute?->getClass() ?? $argument->getType(),
+                $request->getContentType() ?? 'json',
+            );
+        }
     }
 }
