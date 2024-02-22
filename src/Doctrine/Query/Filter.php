@@ -7,11 +7,13 @@ declare(strict_types=1);
 
 namespace Optime\Util\Doctrine\Query;
 
+use ArrayAccess;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use InvalidArgumentException;
 use function array_filter;
 use function count;
-use function dump;
+use function gettype;
 use function is_array;
 use function strlen;
 use function trim;
@@ -30,8 +32,16 @@ class Filter
     ) {
     }
 
-    public static function build(QueryBuilder $query, mixed $value): self
+    public static function build(QueryBuilder $query, mixed $value, string $key = null): self
     {
+        if ($key !== null) {
+            if ((!is_array($value)) && (!$value instanceof ArrayAccess)) {
+                throw new InvalidArgumentException("\$value debe ser un array o implementar ArrayAccess. Pero llegó " . gettype($value));
+            }
+
+            $value = $value[$key] ?? null;
+        }
+
         return new self($query, $value);
     }
 
@@ -126,7 +136,7 @@ class Filter
         if (is_array($this->value)) {
             return $this->hasValue = count(array_filter($this->value)) > 0;
         }
-        
+
         return $this->hasValue = null !== $this->value && strlen(trim((string)$this->value)) > 0;
     }
 
