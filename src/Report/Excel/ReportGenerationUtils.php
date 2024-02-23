@@ -74,7 +74,9 @@ class ReportGenerationUtils
             $this->applyLinkFormat($cell);
         }
 
-        if ($value->isCentered()) {
+        if (null !== $value->getAlignment()) {
+            $cell->getStyle()->getAlignment()->setHorizontal($value->getAlignment());
+        } elseif ($value->isCentered()) {
             $cell->getStyle()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         }
 
@@ -115,13 +117,17 @@ class ReportGenerationUtils
     public function applyHeaderFormat(Cell $cell, HeaderFormat $value): void
     {
         $style = $cell->getStyle();
+        $alignment = $value->getAlignment() ?? ($value->isCentered()
+            ? Alignment::HORIZONTAL_CENTER
+            : Alignment::HORIZONTAL_LEFT
+        );
 
         $style->applyFromArray([
             'font' => [
                 'bold' => true,
             ],
             'alignment' => [
-                'horizontal' => $value->isCentered() ? Alignment::HORIZONTAL_CENTER : Alignment::HORIZONTAL_LEFT,
+                'horizontal' => $alignment,
                 'vertical' => Alignment::VERTICAL_CENTER,
             ],
             'borders' => [
