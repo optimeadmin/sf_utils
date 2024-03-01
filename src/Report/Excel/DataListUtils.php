@@ -87,11 +87,17 @@ class DataListUtils
 
             $colName = Coordinate::stringFromColumnIndex($col);
             $formula = sprintf("'%s'!$%s$%s:$%s$%s", self::DATA_LIST_SHEET_NAME, $colName, 2, $colName, $row - 1);
+            $restrict = $header->isRestrictValues();
 
-            $this->dataListHeaders[$index] = new CallbackFormat(function (Cell $cell) use ($formula) {
+            $this->dataListHeaders[$index] = new CallbackFormat(function (Cell $cell) use ($formula, $restrict) {
                 $v = $cell->getDataValidation();
                 $v->setType(DataValidation::TYPE_LIST);
                 $v->setShowDropDown(true);
+                $v->setOperator(DataValidation::OPERATOR_BETWEEN);
+
+                if ($restrict) {
+                    $v->setShowErrorMessage(true);
+                }
                 $v->setAllowBlank(true);
                 $v->setFormula1($formula);
             });

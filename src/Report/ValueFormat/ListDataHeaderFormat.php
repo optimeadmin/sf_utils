@@ -13,6 +13,7 @@ class ListDataHeaderFormat extends HeaderFormat
     public function __construct(
         $title,
         private readonly iterable $values,
+        private readonly bool $restrictValues = false,
         bool $centered = true,
         ?int $width = null,
     ) {
@@ -22,5 +23,10 @@ class ListDataHeaderFormat extends HeaderFormat
     public function getValues(): iterable
     {
         return $this->values;
+    }
+
+    public function isRestrictValues(): bool
+    {
+        return $this->restrictValues;
     }
 }
