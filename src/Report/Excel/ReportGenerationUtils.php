@@ -74,28 +74,7 @@ class ReportGenerationUtils
             $this->applyLinkFormat($cell);
         }
 
-        if (null !== $value->getAlignment()) {
-            $cell->getStyle()->getAlignment()->setHorizontal($value->getAlignment());
-        } elseif ($value->isCentered()) {
-            $cell->getStyle()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        }
-
-        if ($value->isBold()) {
-            $cell->getStyle()->getFont()->setBold(true);
-        }
-
-        if (null !== $value->getColor()) {
-            $cell->getStyle()->getFont()->setColor(new Color($value->getColor()));
-        }
-
-        if (null !== $value->getBgColor()) {
-            $cell->getStyle()->getFill()->applyFromArray([
-                'fillType' => Fill::FILL_SOLID,
-                'color' => [
-                    'argb' => $value->getBgColor(),
-                ]
-            ]);
-        }
+        $this->applyDefaultStyles($value);
     }
 
     public function writeIn(Worksheet $sheet, int $col, int $row, StringFormat $value): void
@@ -179,5 +158,31 @@ class ReportGenerationUtils
     private function buildUrl(string $path): string
     {
         return $this->urlHelper->getAbsoluteUrl($this->packages->getUrl($path));
+    }
+
+    private function applyDefaultStyles(StringFormat $value): void
+    {
+        if (null !== $value->getAlignment()) {
+            $cell->getStyle()->getAlignment()->setHorizontal($value->getAlignment());
+        } elseif ($value->isCentered()) {
+            $cell->getStyle()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        }
+
+        if ($value->isBold()) {
+            $cell->getStyle()->getFont()->setBold(true);
+        }
+
+        if (null !== $value->getColor()) {
+            $cell->getStyle()->getFont()->setColor(new Color($value->getColor()));
+        }
+
+        if (null !== $value->getBgColor()) {
+            $cell->getStyle()->getFill()->applyFromArray([
+                'fillType' => Fill::FILL_SOLID,
+                'color' => [
+                    'argb' => $value->getBgColor(),
+                ]
+            ]);
+        }
     }
 }

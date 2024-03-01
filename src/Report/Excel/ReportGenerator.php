@@ -6,6 +6,7 @@
 namespace Optime\Util\Report\Excel;
 
 use LogicException;
+use Optime\Util\Report\FullCustomReportInterface;
 use Optime\Util\Report\TableReportInterface;
 use Optime\Util\Report\TabsReportInterface;
 use Optime\Util\Report\ValueFormat\DateFormat;
@@ -17,8 +18,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_flip;
 use function array_keys;
 use function class_exists;
+use function dump;
 use function gettype;
 use function is_object;
+use function iterator_apply;
+use function iterator_to_array;
 use function sprintf;
 
 /**
@@ -35,7 +39,7 @@ class ReportGenerator
         $excel = $this->getSpreadsheet();
         $sheet = $excel->getActiveSheet();
 
-        $this->generateTab($sheet, $report);
+        $this->generateTab($excel, $sheet, $report);
 
         $this->reportUtils->printExcel($excel);
     }
@@ -54,7 +58,7 @@ class ReportGenerator
                 ));
             }
 
-            $this->generateTab($excel->createSheet(), $tabReport);
+            $this->generateTab($excel, $excel->createSheet(), $tabReport);
         }
 
         $excel->setActiveSheetIndex(0);
@@ -62,7 +66,7 @@ class ReportGenerator
         $this->reportUtils->printExcel($excel);
     }
 
-    private function generateTab(Worksheet $sheet, TableReportInterface $report): void
+    private function generateTab(Spreadsheet $excel, Worksheet $sheet, TableReportInterface $report): void
     {
         $headers = $report->getHeaders();
         $reportInfo = new ReportInfo(new StringFormat("Report"));
@@ -86,11 +90,14 @@ class ReportGenerator
         $this->reportUtils->adjustColumnWidths($sheet, $headers);
 
         $indexes = array_flip(array_keys($headers));
-
         $row++;
 
         foreach ($report->getData() as $rowData) {
             $this->fillRow($sheet, $rowData, $row++, $indexes);
+        }
+
+        if ($report instanceof FullCustomReportInterface) {
+            $report->customize($excel, $sheet, $row);
         }
     }
 
