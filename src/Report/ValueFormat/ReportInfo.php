@@ -21,6 +21,7 @@ class ReportInfo
     private ?string $headersColor = null;
     private bool $print = true;
     private int $minRowsCount = 0;
+    private bool $showDataListSheet = false;
 
     public function __construct(private StringFormat $title)
     {
@@ -102,6 +103,11 @@ class ReportInfo
         $this->headersBgColor = $headersBgColor;
     }
 
+    public function showDataListSheet(): void
+    {
+        $this->showDataListSheet = true;
+    }
+
     public function getHeadersBgColor(): ?string
     {
         return $this->headersBgColor;
@@ -115,5 +121,10 @@ class ReportInfo
     public function getHeadersColor(): ?string
     {
         return $this->headersColor;
+    }
+
+    public function isShowDataListSheet(): bool
+    {
+        return $this->showDataListSheet;
     }
 }

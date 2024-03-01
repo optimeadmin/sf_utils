@@ -10,6 +10,7 @@ namespace Optime\Util\Report\Excel;
 use LogicException;
 use Optime\Util\Report\ValueFormat\CallbackFormat;
 use Optime\Util\Report\ValueFormat\ListDataHeaderFormat;
+use Optime\Util\Report\ValueFormat\ReportInfo;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
@@ -44,7 +45,7 @@ class DataListUtils
         return $this->dataListHeaders;
     }
 
-    public function configureDataListsFromHeaders(Spreadsheet $excel, array $headers): void
+    public function configureDataListsFromHeaders(Spreadsheet $excel, array $headers, ReportInfo $reportInfo): void
     {
         $this->dataListHeaders = [];
 
@@ -55,10 +56,14 @@ class DataListUtils
         }
 
         if (!$excel->sheetNameExists(self::DATA_LIST_SHEET_NAME)) {
+            $activeIndex = $excel->getActiveSheetIndex();
             $sheet = $excel->createSheet();
-            $sheet->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
             $sheet->setTitle(self::DATA_LIST_SHEET_NAME);
-            $excel->setActiveSheetIndex(0);
+            $excel->setActiveSheetIndex($activeIndex);
+
+            if (!$reportInfo->isShowDataListSheet()) {
+                $sheet->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
+            }
         } else {
             $sheet = $excel->getSheetByName(self::DATA_LIST_SHEET_NAME);
         }

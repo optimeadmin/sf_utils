@@ -95,7 +95,7 @@ class ReportGenerator
         $this->reportUtils->adjustColumnWidths($sheet, $headers);
 
         // importante hacer esto luego de pintar los headers
-        $this->dataListUtils->configureDataListsFromHeaders($excel, $headers);
+        $this->dataListUtils->configureDataListsFromHeaders($excel, $headers, $reportInfo);
 
         $indexes = array_flip(array_keys($headers));
         $row++;
