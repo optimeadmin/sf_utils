@@ -22,6 +22,7 @@ use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function dump;
 use const PHP_EOL;
 
 /**
@@ -74,7 +75,7 @@ class ReportGenerationUtils
             $this->applyLinkFormat($cell);
         }
 
-        $this->applyDefaultStyles($value);
+        $this->applyDefaultStyles($value, $cell);
     }
 
     public function writeIn(Worksheet $sheet, int $col, int $row, StringFormat $value): void
@@ -160,7 +161,7 @@ class ReportGenerationUtils
         return $this->urlHelper->getAbsoluteUrl($this->packages->getUrl($path));
     }
 
-    private function applyDefaultStyles(StringFormat $value): void
+    private function applyDefaultStyles(StringFormat $value, Cell $cell): void
     {
         if (null !== $value->getAlignment()) {
             $cell->getStyle()->getAlignment()->setHorizontal($value->getAlignment());

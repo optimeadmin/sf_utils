@@ -18,11 +18,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_flip;
 use function array_keys;
 use function class_exists;
-use function dump;
 use function gettype;
 use function is_object;
-use function iterator_apply;
-use function iterator_to_array;
 use function sprintf;
 
 /**
@@ -30,12 +27,16 @@ use function sprintf;
  */
 class ReportGenerator
 {
-    public function __construct(private ReportGenerationUtils $reportUtils)
-    {
+    public function __construct(
+        private readonly ReportGenerationUtils $reportUtils,
+        private readonly DataListUtils $dataListUtils,
+    ) {
     }
 
     public function generate(TableReportInterface $report): void
     {
+        $this->dataListUtils->initialize();
+
         $excel = $this->getSpreadsheet();
         $sheet = $excel->getActiveSheet();
 
@@ -46,6 +47,8 @@ class ReportGenerator
 
     public function generateWithTabs(TabsReportInterface $report): void
     {
+        $this->dataListUtils->initialize();
+
         $excel = $this->getSpreadsheet();
         $excel->removeSheetByIndex($excel->getActiveSheetIndex());
 
@@ -68,6 +71,8 @@ class ReportGenerator
 
     private function generateTab(Spreadsheet $excel, Worksheet $sheet, TableReportInterface $report): void
     {
+        $this->dataListHeaders = [];
+
         $headers = $report->getHeaders();
         $reportInfo = new ReportInfo(new StringFormat("Report"));
         $report->configureInfo($reportInfo);
@@ -88,6 +93,9 @@ class ReportGenerator
 
         $this->fillRow($sheet, $headers, $row);
         $this->reportUtils->adjustColumnWidths($sheet, $headers);
+
+        // importante hacer esto luego de pintar los headers
+        $this->dataListUtils->configureDataListsFromHeaders($excel, $headers);
 
         $indexes = array_flip(array_keys($headers));
         $row++;
@@ -116,6 +124,8 @@ class ReportGenerator
 
             $this->reportUtils->writeCell($sheet, $cell, $value);
         }
+
+        $this->dataListUtils->fillRow($sheet, $row, $indexes);
     }
 
     private function fillReportInfo(Worksheet $sheet, ReportInfo $reportInfo): void
