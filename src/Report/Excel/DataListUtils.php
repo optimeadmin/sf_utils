@@ -48,37 +48,24 @@ class DataListUtils
     public function configureDataListsFromHeaders(Spreadsheet $excel, array $headers, ReportInfo $reportInfo): void
     {
         $this->dataListHeaders = [];
-
-        $dataListsHeaders = array_filter($headers, fn($h) => $h instanceof ListDataHeaderFormat);
+        $dataListsHeaders = $this->extractDataListHeaders($headers);
 
         if (count($dataListsHeaders) === 0) {
             return;
         }
 
-        if (!$excel->sheetNameExists(self::DATA_LIST_SHEET_NAME)) {
-            $activeIndex = $excel->getActiveSheetIndex();
-            $sheet = $excel->createSheet();
-            $sheet->setTitle(self::DATA_LIST_SHEET_NAME);
-            $excel->setActiveSheetIndex($activeIndex);
+        $sheet = $this->getDataListSheet($excel, $reportInfo);
 
-            if (!$reportInfo->isShowDataListSheet()) {
-                $sheet->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
-            }
-        } else {
-            $sheet = $excel->getSheetByName(self::DATA_LIST_SHEET_NAME);
-        }
-
-        /**
-         * @var ListDataHeaderFormat $header
-         */
         foreach ($dataListsHeaders as $index => $header) {
             if (is_numeric($index)) {
                 throw new LogicException("El uso de ListDataHeaderFormat no soporta indices númericos para los headers del reporte");
             }
 
-            $values = $header->getValues();
-            $col = $this->lastDataListCol++;
             $row = 1;
+            $col = $this->lastDataListCol++;
+
+            $values = $header->getValues();
+            $sheet->getColumnDimensionByColumn($col)->setAutoSize(true);
             $sheet->getCell([$col, $row++])->setValue($header->getValue());
 
             foreach ($values as $value) {
@@ -115,5 +102,32 @@ class DataListUtils
             $cell = $sheet->getCell([$colIndex + 1, $row]);
             $this->reportUtils->writeCell($sheet, $cell, $dataListHeader);
         }
+    }
+
+    private function getDataListSheet(Spreadsheet $excel, ReportInfo $reportInfo): Worksheet
+    {
+        if ($excel->sheetNameExists(self::DATA_LIST_SHEET_NAME)) {
+            return $excel->getSheetByName(self::DATA_LIST_SHEET_NAME);
+        }
+
+        $activeIndex = $excel->getActiveSheetIndex();
+        $sheet = $excel->createSheet();
+        $sheet->setTitle(self::DATA_LIST_SHEET_NAME);
+        $excel->setActiveSheetIndex($activeIndex);
+
+        if (!$reportInfo->isShowDataListSheet()) {
+            $sheet->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
+        }
+
+        return $sheet;
+    }
+
+    /**
+     * @param array $headers
+     * @return array<int|string, ListDataHeaderFormat>
+     */
+    private function extractDataListHeaders(array $headers): array
+    {
+        return array_filter($headers, fn($h) => $h instanceof ListDataHeaderFormat);
     }
 }
