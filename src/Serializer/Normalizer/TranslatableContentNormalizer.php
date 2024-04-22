@@ -40,7 +40,7 @@ class TranslatableContentNormalizer implements ContextAwareNormalizerInterface
 
         if ($object->isPending()) {
 
-            if ($context[self::AUTO_REFRESH] ?? false) {
+            if ($context[self::AUTO_REFRESH] ?? true) {
                 $this->entityRefresh->refresh($object->getTarget());
             }
 
