@@ -5,6 +5,7 @@
 
 namespace Optime\Util\Report;
 
+use Optime\Util\Report\Excel\PrintedInfo;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -13,5 +14,5 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  */
 interface FullCustomReportInterface extends TableReportInterface
 {
-    public function customize(Spreadsheet $excel, Worksheet $sheet, int $nextRow): void;
+    public function customize(Spreadsheet $excel, Worksheet $sheet, PrintedInfo $printedInfo): void;
 }

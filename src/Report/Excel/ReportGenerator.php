@@ -72,7 +72,8 @@ class ReportGenerator
 
     public function generateWithResponse(
         TableReportInterface|TabsReportInterface $report,
-        string $filename
+        string $filename,
+        bool $withProfiler = false
     ): ReportResponse {
         return new ReportResponse(function () use ($report) {
             if ($report instanceof TabsReportInterface) {
@@ -80,7 +81,7 @@ class ReportGenerator
             } else {
                 $this->generate($report);
             }
-        }, $filename);
+        }, $filename, $withProfiler);
     }
 
     private function generateTab(Spreadsheet $excel, Worksheet $sheet, TableReportInterface $report): void
@@ -111,13 +112,15 @@ class ReportGenerator
 
         $indexes = array_flip(array_keys($headers));
         $row++;
+        $printedInfo = new PrintedInfo($row, $indexes);
 
         foreach ($report->getData() as $rowData) {
             $this->fillRow($sheet, $rowData, $row++, $indexes);
         }
 
         if ($report instanceof FullCustomReportInterface) {
-            $report->customize($excel, $sheet, $row);
+            $printedInfo->setNextRow($row);
+            $report->customize($excel, $sheet, $printedInfo);
         }
     }
 
