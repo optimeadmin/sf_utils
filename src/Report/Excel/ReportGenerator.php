@@ -7,6 +7,7 @@ namespace Optime\Util\Report\Excel;
 
 use LogicException;
 use Optime\Util\Report\FullCustomReportInterface;
+use Optime\Util\Report\Response\ReportResponse;
 use Optime\Util\Report\TableReportInterface;
 use Optime\Util\Report\TabsReportInterface;
 use Optime\Util\Report\ValueFormat\DateFormat;
@@ -69,10 +70,21 @@ class ReportGenerator
         $this->reportUtils->printExcel($excel);
     }
 
+    public function generateWithResponse(
+        TableReportInterface|TabsReportInterface $report,
+        string $filename
+    ): ReportResponse {
+        return new ReportResponse(function () use ($report) {
+            if ($report instanceof TabsReportInterface) {
+                $this->generateWithTabs($report);
+            } else {
+                $this->generate($report);
+            }
+        }, $filename);
+    }
+
     private function generateTab(Spreadsheet $excel, Worksheet $sheet, TableReportInterface $report): void
     {
-        $this->dataListHeaders = [];
-
         $headers = $report->getHeaders();
         $reportInfo = new ReportInfo(new StringFormat("Report"));
         $report->configureInfo($reportInfo);
