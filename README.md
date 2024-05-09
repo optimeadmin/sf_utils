@@ -31,6 +31,28 @@ optime_util:
     use_ajax_twig_loader: false # Si es true, activa el ajax_loader para twig
 ```
 
+#### Configuración adicional para usar traducciones de entidades
+
+Se debe instalar la libreria https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/installation.html
+
+Configurar la extension de traducciones:
+
+config/packages/doctrine.yaml
+
+```yaml
+doctrine:
+    orm:
+        entity_managers:
+            default:
+                mappings:
+                    gedmo_translatable:
+                        type: annotation
+                        prefix: Gedmo\Translatable\Entity
+                        dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translatable/Entity"
+                        alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
+                        is_bundle: false
+```
+
 <hr>
 
 ## Uso
