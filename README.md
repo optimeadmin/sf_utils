@@ -4,7 +4,7 @@ Repo con clases de utilidad para proyectos Symfony >= 5
 ## Instalación
 
 ```
-composer require optimeconsulting/sf-utils ^6.0@dev
+composer require optimeconsulting/sf-utils ~6.0@dev
 ```
 
 ## Configuración 
