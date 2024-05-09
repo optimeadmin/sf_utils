@@ -33,6 +33,8 @@ optime_util:
 
 #### Configuración adicional para usar traducciones de entidades
 
+**IMPORTANTE** tener en cuenta que para la fecha (Mayo-2024) estas extensiones de doctrine no funcionan bien con doctrine >= 3.0, se debe usar 2.x.
+
 Se debe instalar la libreria https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/installation.html
 
 Configurar la extension de traducciones:
