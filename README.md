@@ -46,7 +46,7 @@ doctrine:
             default:
                 mappings:
                     gedmo_translatable:
-                        type: annotation
+                        type: attribute
                         prefix: Gedmo\Translatable\Entity
                         dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translatable/Entity"
                         alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
