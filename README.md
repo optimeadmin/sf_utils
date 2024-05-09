@@ -53,6 +53,16 @@ doctrine:
                         is_bundle: false
 ```
 
+config/packages/stof_doctrine_extensions.yaml
+
+```yaml
+stof_doctrine_extensions:
+    default_locale: en
+    orm:
+        default:
+            translatable: true
+```
+
 <hr>
 
 ## Uso
