@@ -12,6 +12,7 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
 use function array_filter;
+use function array_map;
 use function count;
 use function gettype;
 use function is_array;
@@ -28,7 +29,7 @@ class Filter
 
     public function __construct(
         private readonly QueryBuilder $query,
-        private readonly mixed $value,
+        private mixed $value,
     ) {
     }
 
@@ -74,11 +75,16 @@ class Filter
     public function like(string|array $fields): self
     {
         if ($this->hasValue()) {
-            $conditions = $this->buildConditions($fields, function ($field, $expr) {
-                return $expr->like($field, $this->getParam());
-            });
+            if (is_array($this->value)) {
+                $this->arrayLike($fields);
+            } else {
+                $conditions = $this->buildConditions($fields, function ($field, $expr) {
+                    return $expr->like($field, $this->getParam());
+                });
 
-            $this->addConditions($conditions, true);
+                $this->addConditions($conditions, true);
+            }
+
         }
 
         return $this;
@@ -121,6 +127,21 @@ class Filter
         return $this;
     }
 
+    public function trim(): self
+    {
+        if ($this->hasValue()) {
+            $this->hasValue = null;
+
+            if (is_array($this->value)) {
+                $this->value = array_map(trim(...), $this->value);
+            } else {
+                $this->value = trim($this->value);
+            }
+        }
+
+        return $this;
+    }
+
     private function addConditions(array $conditions, bool $like = false): void
     {
         $this->query->andWhere($this->query->expr()->orX(...$conditions));
@@ -138,6 +159,24 @@ class Filter
         }
 
         return $this->hasValue = null !== $this->value && strlen(trim((string)$this->value)) > 0;
+    }
+
+    private function arrayLike(string|array $fields): void
+    {
+        $conditions = [];
+
+        foreach ($this->value as $value) {
+            $conditions = [
+                ...$conditions,
+                ...$this->buildConditions($fields, function ($field, $expr) {
+                    return $expr->like($field, $this->getParam());
+                })
+            ];
+
+            $this->addValueParam('%' . $value . '%');
+        }
+
+        $this->query->andWhere($this->query->expr()->orX(...$conditions));
     }
 
     public function buildConditions(string|array $conditions, callable $func): array
@@ -164,6 +203,12 @@ class Filter
         } else {
             $value = $this->value;
         }
+
+        $this->addValueParam($value);
+    }
+
+    private function addValueParam($value): void
+    {
         $this->query->setParameter(trim($this->getParam(), ':'), $value);
         self::$paramIndex++;
     }
