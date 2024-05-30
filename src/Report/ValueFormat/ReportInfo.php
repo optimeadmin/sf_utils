@@ -6,8 +6,11 @@
 namespace Optime\Util\Report\ValueFormat;
 
 use DateTimeImmutable;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_map;
 use function count;
+use function strlen;
+use function substr;
 
 /**
  * @author Manuel Aguirre
@@ -90,6 +93,10 @@ class ReportInfo
 
     public function setTabName(string $tabName): void
     {
+        if (strlen($tabName) > Worksheet::SHEET_TITLE_MAXIMUM_LENGTH) {
+            $tabName = substr($tabName, 0, Worksheet::SHEET_TITLE_MAXIMUM_LENGTH);
+        }
+
         $this->tabName = $tabName;
     }
 
