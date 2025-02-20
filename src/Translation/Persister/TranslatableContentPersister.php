@@ -10,6 +10,7 @@ use Optime\Util\Translation\DefaultLocaleChecker;
 use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
 use Optime\Util\Translation\LocalesProviderInterface;
 use Optime\Util\Translation\TranslatableListener;
+use Optime\Util\Translation\TranslationRepositoryProvider;
 use Optime\Util\Translation\TranslationsAwareInterface;
 
 /**
@@ -21,7 +22,7 @@ class TranslatableContentPersister
         private TranslatableListener $translatableListener,
         private LocalesProviderInterface $localesProvider,
         private DefaultLocaleChecker $localeChecker,
-        private ?TranslationRepository $repository,
+        private TranslationRepositoryProvider $repositoryProvider,
     ) {
     }
 
@@ -29,12 +30,8 @@ class TranslatableContentPersister
     {
         $this->localeChecker->throwOnInvalidLocale($targetEntity);
 
-        if (!$this->repository) {
-            throw new EntityTranslationsNotInstalledException();
-        }
-
         return new PreparedPersister(
-            $this->repository,
+            $this->repositoryProvider->get(),
             $this->translatableListener,
             $this->localesProvider,
             $targetEntity,
