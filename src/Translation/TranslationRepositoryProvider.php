@@ -4,6 +4,7 @@ namespace Optime\Util\Translation;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\MappingException;
+use Gedmo\Translatable\Entity\Translation;
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Optime\Util\Translation\Exception\EntityTranslationsNotInstalledException;
 
