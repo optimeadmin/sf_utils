@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Optime\Util\Http\Request\ArgumentValue;
 
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\Serializer;
@@ -16,6 +18,7 @@ use function json_decode;
 
 /**
  * @author Manuel Aguirre
+ * @deprecated use MapRequestPayload instead
  */
 class RequestContentValueResolver implements ArgumentValueResolverInterface
 {
