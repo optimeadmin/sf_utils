@@ -24,7 +24,7 @@ class AbstractControllerAttributeListener
     private null|array|object $attribute = null;
 
     public function __construct(
-        private AjaxChecker $ajaxChecker,
+        private readonly ?AjaxChecker $ajaxChecker = null,
     ) {
     }
 
@@ -51,14 +51,23 @@ class AbstractControllerAttributeListener
     /**
      * @param ControllerEvent $event
      * @param string $attributeClass
+     * @param bool $checkAjax
      * @return array
      */
-    protected function getAttributesIfApply(ControllerEvent $event, string $attributeClass): array
+    protected function getAttributesIfApply(
+        ControllerEvent $event,
+        string $attributeClass,
+        bool $checkAjax = true,
+    ): array
     {
         $controller = $event->getController();
         $request = $event->getRequest();
 
-        if (!$event->isMainRequest() || !$this->ajaxChecker->isAjax($request)) {
+        if (!$event->isMainRequest()) {
+            return [];
+        }
+
+        if ($checkAjax && $this->ajaxChecker && !$this->ajaxChecker->isAjax($request)) {
             return [];
         }
 
@@ -84,6 +93,9 @@ class AbstractControllerAttributeListener
         return $controller[0]::class . ':' . $controller[1];
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function getReflectionMethod(array $controller): ReflectionMethod
     {
         return self::$loaded[$this->controllerToString($controller)]
