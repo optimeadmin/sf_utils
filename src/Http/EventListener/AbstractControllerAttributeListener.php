@@ -9,6 +9,7 @@ use Optime\Util\Http\Request\AjaxChecker;
 use ReflectionException;
 use ReflectionMethod;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Contracts\Service\ResetInterface;
 use function count;
 use function is_array;
 use function is_object;
@@ -17,9 +18,10 @@ use function is_string;
 /**
  * @author Manuel Aguirre
  */
-class AbstractControllerAttributeListener
+class AbstractControllerAttributeListener implements ResetInterface
 {
-    private static array $loaded = [];
+    private static array $reflections = [];
+    private static array $attributes = [];
 
     private null|array|object $attribute = null;
 
@@ -58,8 +60,7 @@ class AbstractControllerAttributeListener
         ControllerEvent $event,
         string $attributeClass,
         bool $checkAjax = true,
-    ): array
-    {
+    ): array {
         $controller = $event->getController();
         $request = $event->getRequest();
 
@@ -85,12 +86,12 @@ class AbstractControllerAttributeListener
             return [];
         }
 
-        return $reflection->getAttributes($attributeClass);
+        return $this->doGetAttributes($reflection, $attributeClass);
     }
 
     private function controllerToString(array $controller): string
     {
-        return $controller[0]::class . ':' . $controller[1];
+        return $controller[0]::class.':'.$controller[1];
     }
 
     /**
@@ -98,7 +99,24 @@ class AbstractControllerAttributeListener
      */
     private function getReflectionMethod(array $controller): ReflectionMethod
     {
-        return self::$loaded[$this->controllerToString($controller)]
+        return self::$reflections[$this->controllerToString($controller)]
             ??= new ReflectionMethod($controller[0], $controller[1]);
+    }
+
+    private function doGetAttributes(ReflectionMethod $reflection, string $attributeClass): array
+    {
+        return self::$attributes[$reflection->getName()][$attributeClass] ??= array_values(
+            array_unique([
+                ...$reflection->getAttributes($attributeClass),
+                ...$reflection->getDeclaringClass()->getAttributes($attributeClass),
+            ])
+        );
+    }
+
+    public function reset(): void
+    {
+        $this->attribute = null;
+        self::$reflections = [];
+        self::$attributes = [];
     }
 }
