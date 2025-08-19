@@ -7,6 +7,7 @@ namespace Optime\Util\Doctrine\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Optime\Util\Entity\Embedded\Date;
@@ -34,10 +35,10 @@ class ExternalUuidOrDatesAwareEntityListener implements EventSubscriberInterface
         ];
     }
 
-    public function prePersist(LifecycleEventArgs $event): void
+    public function prePersist(LifecycleEventArgs|PrePersistEventArgs $event): void
     {
-        $entity = $event->getEntity();
-        $metadata = $event->getEntityManager()->getClassMetadata($entity::class);
+        $entity = $event->getObject();
+        $metadata = $event->getObjectManager()->getClassMetadata($entity::class);
         $entityClass = $metadata->getName();
 
         $this->loadEntityInfo($metadata);

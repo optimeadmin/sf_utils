@@ -763,3 +763,40 @@ public function actionThree(
     ...
 }
 ```
+
+#### RequestDeserializer
+
+Clase de utilidad para metodos `patch` poder actualizar solo algunas propiedades de un recurso.<br/>
+Todos los datos se cargan desde el Request de la petición.<br/>
+La clase completa es: `Optime\Util\Serializer\RequestDeserializer`
+
+##### Ejemplos:
+
+```php
+#[Route('/countries/{id<\d+>}', methods: ['PATCH'])]
+public function update(Country $country, RequestDeserializer $deserializer): Response
+{
+    $dto = CountryDto::fromEntity($country);
+    $deserializer->fromPayload($dto);
+    // Si se pasa un objeto, este se actualiza
+    ...
+}
+
+#[Route('/countries/{id<\d+>}', methods: ['PATCH'])]
+public function update(Country $country, RequestDeserializer $deserializer): Response
+{
+    $dto = CountryDto::fromEntity($country);
+    $dto = $deserializer->fromPayload($dto);
+    // Tambien se puede obtener el valor retornado, que en este caso es el mismo que se pasa como argumento
+    ...
+}
+
+
+#[Route('/countries/{id<\d+>}', methods: ['PATCH'])]
+public function update(Country $country, RequestDeserializer $deserializer): Response
+{
+    $dto = $deserializer->fromPayload(CountryDto::class);
+    // Si se pasa un string de una clase, se crea y retorna dicha clase con los datos
+    ...
+}
+```
