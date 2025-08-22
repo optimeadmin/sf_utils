@@ -28,7 +28,7 @@ class OptimeUtilExtension extends Extension
 
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../Resources/config'),
+            new FileLocator(__DIR__.'/../Resources/config'),
             $container->getParameter('kernel.environment'),
         );
         $loader->load('services.yaml');
@@ -54,5 +54,14 @@ class OptimeUtilExtension extends Extension
         if (!$config['use_form_error_normalizer']) {
             $container->removeDefinition(FormErrorNormalizer::class);
         }
+
+        $container->setParameter(
+            'optime.sf_utils.mailer_allowed_recipients',
+            $config['mailer']['allowed_recipients']
+        );
+        $container->setParameter(
+            'optime.sf_utils.mailer_fallback_recipients',
+            $config['mailer']['fallback_recipients']
+        );
     }
 }

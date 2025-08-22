@@ -7,11 +7,11 @@ namespace Optime\Util;
 
 use Optime\Util\DependencyInjection\Compiler\AddDoctrineTypesPass;
 use Optime\Util\DependencyInjection\Compiler\AddFormThemePass;
+use Optime\Util\DependencyInjection\Compiler\AddMailerRecipientsListenerPass;
 use Optime\Util\DependencyInjection\Compiler\ConfigureAjaxTwigLoaderPass;
 use Optime\Util\DependencyInjection\Compiler\ConfigureFormErrorNormalizerPass;
 use Optime\Util\DependencyInjection\Compiler\ConfigureTranslatableListenerPass;
 use Optime\Util\DependencyInjection\Compiler\ConfigureTranslatorRepositoryPass;
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

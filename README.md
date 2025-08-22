@@ -29,6 +29,9 @@ optime_util:
     locales: [en, es, pt] # Configuración opcional
     default_locale: "%kernel.default_locale%" # Configuración opcional 
     use_ajax_twig_loader: false # Si es true, activa el ajax_loader para twig
+#   mailer:
+#      allowed_recipients: '%env(MAILER_ALLOWED_RECIPIENTS)%' ej: MAILER_ALLOWED_RECIPIENTS="*@domain.com,user@domain2.com
+#      fallback_recipients: '%env(MAILER_FALLBACK_RECIPIENTS)%' valores separados por comas
 ```
 
 #### Configuración adicional para usar traducciones de entidades
