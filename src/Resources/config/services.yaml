@@ -25,3 +25,8 @@ services:
         autoconfigure: false
         arguments:
             - ""
+
+    Optime\Util\Mailer\Listener\RecipientsListener:
+        arguments:
+            - '%optime.sf_utils.mailer_allowed_recipients%'
+            - '%optime.sf_utils.mailer_fallback_recipients%'
