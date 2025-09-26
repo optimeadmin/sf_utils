@@ -9,6 +9,7 @@ use Optime\Util\Http\Request\AjaxChecker;
 use Optime\Util\Serializer\Normalizer\FormErrorNormalizer;
 use Optime\Util\Translation\TranslatableListener;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -28,7 +29,7 @@ class OptimeUtilExtension extends Extension
 
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../Resources/config'),
+            new FileLocator(__DIR__.'/../Resources/config'),
             $container->getParameter('kernel.environment'),
         );
         $loader->load('services.yaml');
@@ -54,5 +55,14 @@ class OptimeUtilExtension extends Extension
         if (!$config['use_form_error_normalizer']) {
             $container->removeDefinition(FormErrorNormalizer::class);
         }
+
+        $container->setParameter(
+            'optime.sf_utils.mailer_allowed_recipients',
+            $config['mailer']['allowed_recipients']
+        );
+        $container->setParameter(
+            'optime.sf_utils.mailer_fallback_recipients',
+            $config['mailer']['fallback_recipients']
+        );
     }
 }

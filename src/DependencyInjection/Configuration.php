@@ -42,6 +42,19 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('use_form_error_normalizer')
                     ->defaultTrue()
                 ->end()
+                ->arrayNode('mailer')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('allowed_recipients')->defaultValue('')->end()
+                        ->scalarNode('fallback_recipients')->defaultValue('')->end()
+//                        ->arrayNode('allowed_recipients')
+//                            ->prototype('scalar')->defaultValue([])->end()
+//                        ->end()
+//                        ->arrayNode('fallback_recipients')
+//                            ->prototype('scalar')->defaultValue([])->end()
+//                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

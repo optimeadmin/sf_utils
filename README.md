@@ -29,6 +29,20 @@ optime_util:
     locales: [en, es, pt] # Configuración opcional
     default_locale: "%kernel.default_locale%" # Configuración opcional 
     use_ajax_twig_loader: false # Si es true, activa el ajax_loader para twig
+#   mailer:
+#      allowed_recipients: '%env(MAILER_ALLOWED_RECIPIENTS)%' ej: MAILER_ALLOWED_RECIPIENTS="*@domain.com,user@domain2.com
+#      fallback_recipients: '%env(MAILER_FALLBACK_RECIPIENTS)%' valores separados por comas
+```
+
+#### Rutas (opcional)
+
+Si queremos acceso a temas de cache, crear el archivo `config/routes/optime_utils.yaml`:
+
+```yaml
+optime_utils:
+  resource: "@OptimeUtilBundle/Controller/"
+  type: attribute
+  prefix: /{_locale}/admin/system
 ```
 
 #### Configuración adicional para usar traducciones de entidades
