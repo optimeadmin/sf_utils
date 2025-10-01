@@ -47,11 +47,15 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
 
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
-        return isset($context[self::KEY]) && $data;
+        return isset($context[self::KEY]);
     }
 
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
+        if (!$data) {
+            return is_array($data) ? [] : null;
+        }
+
         $entityClass = is_string($context[self::KEY]) ? $context[self::KEY] : $type;
         $repository = $this->entityManager->getRepository($entityClass);
         $method = $context[self::REPOSITORY_METHOD] ?? 'find';
