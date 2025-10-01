@@ -9,6 +9,7 @@ namespace Optime\Util\Serializer;
 
 /**
  * @author Manuel Aguirre
+ * @deprecated Usar MapToEntityDenormalizer
  */
 interface DeserializeObjectsAwareInterface
 {
