@@ -729,55 +729,6 @@ $.get('ajax-page').done(json => {
 
 <hr>
 
-#### `Optime\Util\Http\Request\ArgumentValue\LoadFromRequestContent`
-
-Clase de tipo atributo que permite indicar que queremos cargar los
-datos que vienen de una petición `application/json` en un objeto o un
-array, usando el serializador de Symfony.
-
-##### Ejemplos:
-
-```php
-// Controlador:
-
-use Optime\Util\Http\Request\ArgumentValue\LoadFromRequestContent;
-
-public function actionOne(#[LoadFromRequestContent] array $userData)
-{
-    // es equivalente a:
-    $userData2 = json_decode($request->getContent(), false);
-    ...
-}
-
-public function actionTwo(#[LoadFromRequestContent] UserDataRequest $userData)
-{
-    // es equivalente a:
-    $userData2 = $serializer->deserialize(
-        $request->getContent(),
-        UserDataRequest::class,
-        $request->getContentType() ?? 'json',
-    );
-    ...
-}
-
-/**
- * Cuando colocar el tipo en el parametro da problemas
- * (Ejemplo con entidades de doctrine)
- * Se puede indicar el tipo en el Atributo. 
- */
-public function actionThree(
-    #[LoadFromRequestContent(UserDataRequest::class)] $userData
-) {
-    // es equivalente a:
-    $userData2 = $serializer->deserialize(
-        $request->getContent(),
-        UserDataRequest::class,
-        $request->getContentType() ?? 'json',
-    );
-    ...
-}
-```
-
 #### RequestDeserializer
 
 Clase de utilidad para metodos `patch` poder actualizar solo algunas propiedades de un recurso.<br/>
@@ -814,3 +765,41 @@ public function update(Country $country, RequestDeserializer $deserializer): Res
     ...
 }
 ```
+
+<hr>
+
+#### MapToEntity
+
+Utilidad para mapear datos de una propiedad de un DTO a una entidad.
+
+##### Ejemplos:
+
+```php
+class PlayerDto
+{
+    #[Context(['map_to_entity' => true])]
+    private ?Country $country = null;
+    
+    // Se puede indicar la entidad en el contexto
+    #[Context(['map_to_entity' => State::class])]
+    private $state = null;
+    
+    // Se puede indicar la entidad en el contexto
+    #[Context([
+        'map_to_entity' => City::class,
+        'repository_method' => 'findBy' // metodo del repositorio para buscar la entidad, por defecto es 'find' o 'findOneBy' si es un array
+        'primary_key' => 'cityId' // campo de clave primaria, por defecto es 'id'
+        'error_message' => 'City not found' // mensaje de error si no se encuentra la entidad
+    ])]
+    private ?City $city = null;
+   
+    // Tambien funciona con arrays o Collecciones de doctrine
+    #[Context(['map_to_entity' => Medal::class])]
+    private ?array $medals = null;
+    
+    #[Context(['map_to_entity' => Tags::class])]
+    private ?ArrayCollection $tags = null;
+}
+
+```
+

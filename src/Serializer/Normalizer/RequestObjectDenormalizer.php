@@ -24,6 +24,7 @@ use function is_subclass_of;
 
 /**
  * @author Manuel Aguirre
+ * @deprecated Usar MapToEntityDenormalizer
  */
 #[AutoconfigureTag("serializer.normalizer", ['priority' => 10])]
 class RequestObjectDenormalizer implements ContextAwareDenormalizerInterface, DenormalizerAwareInterface
@@ -34,7 +35,6 @@ class RequestObjectDenormalizer implements ContextAwareDenormalizerInterface, De
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PropertyAccessorInterface $propertyAccessor,
     ) {
     }
 

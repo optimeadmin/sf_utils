@@ -11,6 +11,7 @@ use Attribute;
 
 /**
  * @author Manuel Aguirre
+ * @deprecated Usar MapToEntityDenormalizer
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class DeserializeObject
