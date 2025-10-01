@@ -35,6 +35,7 @@ class RequestObjectDenormalizer implements ContextAwareDenormalizerInterface, De
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly PropertyAccessorInterface $propertyAccessor,
     ) {
     }
 
