@@ -92,10 +92,20 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
         return $object;
     }
 
-    private function getValues(ObjectRepository $repository, $data, string $method, array $context): array
+    private function getValues(ObjectRepository $repository, array $data, string $method, array $context): array
     {
         $idKey = $context[self::PRIMARY_KEY] ?? 'id';
         $method = $context[self::REPOSITORY_METHOD] ?? 'findBy';
+
+        $formattedData = array_map(function ($item) use ($idKey) {
+            // Si es un array asociativo, buscamos el id
+            // Si existe el key de id, entonces retornamos ese valor
+            if (is_array($item) && array_key_exists($idKey, $item)) {
+                return $item[$idKey];
+            }
+
+            return $item;
+        }, $data);
 
         $items = $repository->{$method}([$idKey => $data]);
 
