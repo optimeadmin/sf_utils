@@ -59,8 +59,15 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
         $entityClass = is_string($context[self::KEY]) ? $context[self::KEY] : $type;
         $repository = $this->entityManager->getRepository($entityClass);
         $method = $context[self::REPOSITORY_METHOD] ?? 'find';
+        $idKey = $context[self::PRIMARY_KEY] ?? 'id';
 
         if (is_array($data)) {
+            if (array_key_exists($idKey, $data)) {
+                // Si existe el key de id, entonces es un array asociativo
+                // y el id viene como data['id'], por lo que lo tratamos como un unico valor
+                return $this->getValue($repository, $data[$idKey], $method, $context);
+            }
+
             $items = $this->getValues($repository, $data, $method, $context);
 
             if (is_a($type, ArrayCollection::class, true)) {
