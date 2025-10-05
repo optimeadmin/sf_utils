@@ -794,9 +794,17 @@ class PlayerDto
     private ?City $city = null;
    
     // Tambien funciona con arrays o Collecciones de doctrine
+    // IMPORTANTE: si es un array, o iterable debe documentarse el tipo para que el serializer funcione bien.
+    
+    /**
+     * @var Medal[]|null 
+     */
     #[Context(['map_to_entity' => Medal::class])]
     private ?array $medals = null;
     
+    /**
+     * @var Tags[]|null 
+     */
     #[Context(['map_to_entity' => Tags::class])]
     private ?ArrayCollection $tags = null;
 }
