@@ -53,7 +53,11 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (!$data) {
-            return is_array($data) ? [] : null;
+            if (str_ends_with($type, '[]')) {
+                return [];
+            }
+
+            return null;
         }
 
         $entityClass = is_string($context[self::KEY]) ? $context[self::KEY] : $type;
