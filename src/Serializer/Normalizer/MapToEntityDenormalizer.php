@@ -107,14 +107,14 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
             return $item;
         }, $data);
 
-        $items = $repository->{$method}([$idKey => $data]);
+        $items = $repository->{$method}([$idKey => $formattedData]);
 
         if (count($items) >= count(($data))) {
             return $items;
         }
 
         $itemsValues = array_map(fn($item) => $this->propertyAccessor->getValue($item, $idKey), $items);
-        $missingValues = array_diff($data, $itemsValues);
+        $missingValues = array_diff($formattedData, $itemsValues);
 
         $errorMessage = $context[self::ERROR_MESSAGE] ?? 'Values ('.join(', ', $missingValues).') not found';
         throw ValidationException::create($errorMessage, $context['deserialization_path'] ?? '');
