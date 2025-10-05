@@ -107,7 +107,7 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
             return $item;
         }, $data);
 
-        $items = $repository->{$method}([$idKey => $data]);
+        $items = $repository->{$method}([$idKey => $formattedData]);
 
         if (count($items) >= count(($data))) {
             return $items;
