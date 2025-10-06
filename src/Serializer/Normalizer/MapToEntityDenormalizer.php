@@ -9,31 +9,20 @@ namespace Optime\Util\Serializer\Normalizer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
 use Optime\Util\Exception\ValidationException;
-use Optime\Util\Serializer\Attribute\DeserializeObject;
-use Optime\Util\Serializer\DeserializeObjectsAwareInterface;
-use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerAwareTrait;
 use function array_key_exists;
-use function array_keys;
 use function is_array;
-use function is_subclass_of;
 
 /**
  * @author Manuel Aguirre
  */
 #[AutoconfigureTag("serializer.normalizer", ['priority' => 10])]
-class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, DenormalizerAwareInterface
+class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface
 {
-    use DenormalizerAwareTrait;
-
     public const KEY = 'map_to_entity';
     public const REPOSITORY_METHOD = 'repository_method';
     public const PRIMARY_KEY = 'primary_key';
@@ -52,8 +41,10 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
 
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
+        $isArray = str_ends_with($type, '[]');
+
         if (!$data) {
-            if (str_ends_with($type, '[]')) {
+            if ($isArray) {
                 return [];
             }
 
@@ -65,13 +56,7 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
         $method = $context[self::REPOSITORY_METHOD] ?? 'find';
         $idKey = $context[self::PRIMARY_KEY] ?? 'id';
 
-        if (is_array($data)) {
-            if (array_key_exists($idKey, $data)) {
-                // Si existe el key de id, entonces es un array asociativo
-                // y el id viene como data['id'], por lo que lo tratamos como un unico valor
-                return $this->getValue($repository, $data[$idKey], $method, $context);
-            }
-
+        if ($isArray) {
             $items = $this->getValues($repository, $data, $method, $context);
 
             if (is_a($type, ArrayCollection::class, true)) {
@@ -79,6 +64,12 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface, Deno
             }
 
             return $items;
+        }
+
+        if (is_array($data) && array_key_exists($idKey, $data)) {
+            // Si existe el key de id, entonces es un array asociativo
+            // y el id viene como data['id'], por lo que lo tratamos como un unico valor
+            return $this->getValue($repository, $data[$idKey], $method, $context);
         }
 
         return $this->getValue($repository, $data, $method, $context);
