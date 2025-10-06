@@ -37,6 +37,7 @@ class RequestDeserializer
         } else {
             $targetClass = get_class($target);
             $context['object_to_populate'] = $target;
+            $context['deep_object_to_populate'] = true;
         }
 
         $object = $this->serializer->denormalize($payload, $targetClass, null, $context);
