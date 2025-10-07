@@ -29,7 +29,6 @@ class RequestDeserializer
             throw new \RuntimeException('No current request available.');
         }
 
-
         $payload = $request->getPayload()->all();
 
         if (is_string($target)) {

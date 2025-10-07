@@ -41,7 +41,7 @@ class MapToEntityDenormalizer implements ContextAwareDenormalizerInterface
 
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
-        $isArray = str_ends_with($type, '[]');
+        $isArray = str_ends_with($type, '[]') || is_a($type, ArrayCollection::class, true) || $type === 'array';
 
         if (!$data) {
             if ($isArray) {
