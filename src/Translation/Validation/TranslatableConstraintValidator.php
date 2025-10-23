@@ -28,13 +28,16 @@ class TranslatableConstraintValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if (null === $value) {
-            // por ahora se ignoran casos de valores nulos.
-            return;
+            if (!$constraint->required) {
+                return;
+            }
+
+            $value = new TranslatableContent([], $this->localesProvider->getDefaultLocale());
         }
 
         if (!$value instanceof TranslatableContent) {
             throw new \LogicException(sprintf(
-                "El constraint TranslatableConstraint solo puede usarse para propiedades de " .
+                "El constraint TranslatableConstraint solo puede usarse para propiedades de ".
                 "tipo TranslatableContent. Sin embargo llegó el tipo '%s' para el atributo '%s'",
                 $this->formatTypeOf($value),
                 $this->context->getPropertyName()
@@ -52,7 +55,7 @@ class TranslatableConstraintValidator extends ConstraintValidator
 
         foreach ($this->localesProvider->getLocales() as $locale) {
             $validator
-                ->atPath($constraint->errorsPath . '[' . $locale . ']')
+                ->atPath($constraint->errorsPath.'['.$locale.']')
                 ->validate($value->byLocale($locale), $constraint->constraints);
         }
     }

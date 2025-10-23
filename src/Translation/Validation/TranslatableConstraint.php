@@ -23,6 +23,7 @@ class TranslatableConstraint extends All
         string $errorsPath = 'values',
         array $groups = null,
         mixed $payload = null,
+        public bool $required = false,
     ) {
         parent::__construct($constraints, $groups, $payload);
         $this->errorsPath = $errorsPath;
