@@ -114,7 +114,7 @@ class ReportGenerator
         $row++;
         $printedInfo = new PrintedInfo($row, $indexes);
 
-        foreach ($report->getData() as $rowData) {
+        foreach ($report->getData(new DataUtils($printedInfo)) as $rowData) {
             $this->fillRow($sheet, $rowData, $row++, $indexes);
         }
 
@@ -124,8 +124,7 @@ class ReportGenerator
         }
     }
 
-    private function fillRow(Worksheet $sheet, array $rowData, int $row, array $indexes = null): void
-    {
+    private function fillRow(Worksheet $sheet, array $rowData, int $row, array $indexes = null): void {
         $col = 1;
 
         foreach ($rowData as $index => $value) {
@@ -155,7 +154,7 @@ class ReportGenerator
 
         if ($date = $reportInfo->getGeneratedAt()) {
             $this->reportUtils->writeIn($sheet, 1, $row++, new StringFormat(
-                'Date: ' . (new DateFormat($date))
+                'Date: '.(new DateFormat($date))
             ));
         }
     }

@@ -8,10 +8,7 @@ declare(strict_types=1);
 namespace Optime\Util\Report\ValueFormat;
 
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Stringable;
-use function call_user_func;
-use function dump;
 use function str_replace;
 
 /**
