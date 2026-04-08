@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 class PrintedInfo
 {
     private readonly int $nextRow;
+    private array $colNames = [];
 
     public function __construct(
         private readonly int $headersRow,
@@ -50,6 +51,8 @@ class PrintedInfo
 
     public function getColNameByHeader(string|int $headerKey): string
     {
-        return Coordinate::stringFromColumnIndex($this->getColIndexByHeader($headerKey));
+        return $this->colNames[$headerKey] ??= Coordinate::stringFromColumnIndex(
+            $this->getColIndexByHeader($headerKey)
+        );
     }
 }
