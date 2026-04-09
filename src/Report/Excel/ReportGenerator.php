@@ -113,14 +113,15 @@ class ReportGenerator
         $indexes = array_flip(array_keys($headers));
         $row++;
         $printedInfo = new PrintedInfo($row, $indexes);
+        $dataUtils = new DataUtils($printedInfo);
 
-        foreach ($report->getData(new DataUtils($printedInfo)) as $rowData) {
+        foreach ($report->getData($dataUtils) as $rowData) {
             $this->fillRow($sheet, $rowData, $row++, $indexes);
         }
 
         if ($report instanceof FullCustomReportInterface) {
             $printedInfo->setNextRow($row);
-            $report->customize($excel, $sheet, $printedInfo);
+            $report->customize($excel, $sheet, $dataUtils);
         }
     }
 
