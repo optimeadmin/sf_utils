@@ -15,6 +15,7 @@ use Optime\Util\Report\ValueFormat\HeaderFormat;
 use Optime\Util\Report\ValueFormat\ReportInfo;
 use Optime\Util\Report\ValueFormat\StringFormat;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use function array_flip;
 use function array_keys;
@@ -104,27 +105,33 @@ class ReportGenerator
 
         $sheet->getRowDimension($row)->setRowHeight(30);
 
+        $indexes = array_flip(array_keys($headers));
+        $printedInfo = new PrintedInfo($row, $indexes);
+        $dataUtils = new DataUtils($printedInfo);
+
+        $this->fillHeaders($excel, $sheet, $headers, $reportInfo);
+        $this->applyProtections($sheet, $headers, $dataUtils);
+
         $this->fillRow($sheet, $headers, $row);
         $this->reportUtils->adjustColumnWidths($sheet, $headers);
 
         // importante hacer esto luego de pintar los headers
         $this->dataListUtils->configureDataListsFromHeaders($excel, $headers, $reportInfo);
 
-        $indexes = array_flip(array_keys($headers));
         $row++;
-        $printedInfo = new PrintedInfo($row, $indexes);
 
-        foreach ($report->getData(new DataUtils($printedInfo)) as $rowData) {
+        foreach ($report->getData($dataUtils) as $rowData) {
             $this->fillRow($sheet, $rowData, $row++, $indexes);
         }
 
         if ($report instanceof FullCustomReportInterface) {
             $printedInfo->setNextRow($row);
-            $report->customize($excel, $sheet, $printedInfo);
+            $report->customize($excel, $sheet, $dataUtils);
         }
     }
 
-    private function fillRow(Worksheet $sheet, array $rowData, int $row, array $indexes = null): void {
+    private function fillRow(Worksheet $sheet, array $rowData, int $row, array $indexes = null): void
+    {
         $col = 1;
 
         foreach ($rowData as $index => $value) {
@@ -188,6 +195,46 @@ class ReportGenerator
                     $header->color($color);
                 }
             }
+        }
+    }
+
+    private function fillHeaders(Spreadsheet $excel, Worksheet $sheet, array $headers, ReportInfo $reportInfo): void
+    {
+        $row = $reportInfo->getRowsCount();
+
+        $this->fillRow($sheet, $headers, $row);
+        $this->reportUtils->adjustColumnWidths($sheet, $headers);
+
+        // importante hacer esto luego de pintar los headers
+        $this->dataListUtils->configureDataListsFromHeaders($excel, $headers, $reportInfo);
+    }
+
+    private function applyProtections(Worksheet $sheet, array $headers, DataUtils $dataUtils): void
+    {
+        $protectExcel = false;
+
+        foreach ($headers as $headerKey => $header) {
+            if (!$header instanceof HeaderFormat) {
+                continue;
+            }
+
+            if ($header->isReadOnly()) {
+                if (!$protectExcel) {
+                    $lastCol = $sheet->getHighestColumn();
+                    $sheet->getStyle("A:$lastCol")->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                }
+
+                $col = $dataUtils->getColNameByHeader($header->getValue());
+                $sheet->getStyle("$col:$col")->getProtection()->setLocked(
+                    Protection::PROTECTION_PROTECTED
+                );
+
+                $protectExcel = true;
+            }
+        }
+
+        if ($protectExcel) {
+            $sheet->getProtection()->setSheet(true);
         }
     }
 }

@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -67,6 +68,7 @@ class ReportGenerationUtils
 
         if ($value instanceof HeaderFormat) {
             $this->applyHeaderFormat($cell, $value);
+
             return;
         }
 
@@ -152,7 +154,7 @@ class ReportGenerationUtils
 
         if (null !== $message) {
             $sheet->getComment($cell->getCoordinate())
-                ->getText()->createTextRun(trim($message) . PHP_EOL);
+                ->getText()->createTextRun(trim($message).PHP_EOL);
         }
     }
 
@@ -182,7 +184,7 @@ class ReportGenerationUtils
                 'fillType' => Fill::FILL_SOLID,
                 'color' => [
                     'argb' => $value->getBgColor(),
-                ]
+                ],
             ]);
         }
     }
