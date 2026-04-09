@@ -38,7 +38,7 @@ class DataUtils
      *
      * Ejemplo
      *
-     * =(%price% * %quantity%)
+     * =({price} * {quantity})
      *
      * Esto se convierte en algo como: =(B{row} * E{row})
      *
@@ -48,7 +48,7 @@ class DataUtils
     public function parseFormula(string $formula): string
     {
         return $this->cachedFormulas[$formula] ??= preg_replace_callback(
-            '/%([^%]+)%/',
+            '/\{([^}]+)\}/',
             function (array $matches) use (&$formula) {
                 $headerKey = $matches[1];
 
