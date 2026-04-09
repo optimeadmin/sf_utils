@@ -224,7 +224,7 @@ class ReportGenerator
                     $sheet->getStyle("A:$lastCol")->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 }
 
-                $col = $dataUtils->getColNameByHeader($header->getValue());
+                $col = $dataUtils->getColNameByHeader($headerKey);
                 $sheet->getStyle("$col:$col")->getProtection()->setLocked(
                     Protection::PROTECTION_PROTECTED
                 );
