@@ -31,6 +31,15 @@ class RequestDeserializer
 
         $payload = $request->getPayload()->all();
 
+        return $this->fromRawData($target, $payload, $context, $validationGroups);
+    }
+
+    public function fromRawData(
+        string|object $target,
+        array|string $data,
+        array $context = [],
+        string|GroupSequence|array|null|false|callable $validationGroups = null
+    ): object {
         if (is_string($target)) {
             $targetClass = $target;
         } else {
@@ -39,7 +48,11 @@ class RequestDeserializer
             $context['deep_object_to_populate'] = true;
         }
 
-        $object = $this->serializer->denormalize($payload, $targetClass, null, $context);
+        if (is_string($data)) {
+            $object = $this->serializer->deserialize($data, $targetClass, 'json', $context);
+        } else {
+            $object = $this->serializer->denormalize($data, $targetClass, null, $context);
+        }
 
         if (false !== $validationGroups) {
             if (is_callable($validationGroups)) {
