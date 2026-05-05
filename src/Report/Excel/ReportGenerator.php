@@ -6,6 +6,10 @@
 namespace Optime\Util\Report\Excel;
 
 use LogicException;
+use Optime\Util\Report\Event\ConfigureReportInfoEvent;
+use Optime\Util\Report\Event\HeadersGeneratedEvent;
+use Optime\Util\Report\Event\ReportGeneratedEvent;
+use Optime\Util\Report\Event\TabGeneratedEvent;
 use Optime\Util\Report\FullCustomReportInterface;
 use Optime\Util\Report\Response\ReportResponse;
 use Optime\Util\Report\TableReportInterface;
@@ -17,6 +21,7 @@ use Optime\Util\Report\ValueFormat\StringFormat;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function array_flip;
 use function array_keys;
 use function class_exists;
@@ -32,6 +37,7 @@ class ReportGenerator
     public function __construct(
         private readonly ReportGenerationUtils $reportUtils,
         private readonly DataListUtils $dataListUtils,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -63,7 +69,9 @@ class ReportGenerator
                 ));
             }
 
-            $this->generateTab($excel, $excel->createSheet(), $tabReport);
+            $dataUtils = $this->generateTab($excel, $sheet = $excel->createSheet(), $tabReport);
+
+            $this->eventDispatcher->dispatch(new TabGeneratedEvent($excel, $sheet, $report, $tabReport, $dataUtils));
         }
 
         $excel->setActiveSheetIndex(0);
@@ -85,11 +93,13 @@ class ReportGenerator
         }, $filename, $withProfiler);
     }
 
-    private function generateTab(Spreadsheet $excel, Worksheet $sheet, TableReportInterface $report): void
+    private function generateTab(Spreadsheet $excel, Worksheet $sheet, TableReportInterface $report): DataUtils
     {
         $headers = $report->getHeaders();
         $reportInfo = new ReportInfo(new StringFormat("Report"));
         $report->configureInfo($reportInfo);
+
+        $this->eventDispatcher->dispatch(new ConfigureReportInfoEvent($report, $reportInfo));
 
         $this->configHeadersFromInfo($reportInfo, $headers);
 
@@ -115,6 +125,8 @@ class ReportGenerator
         $this->fillRow($sheet, $headers, $row);
         $this->reportUtils->adjustColumnWidths($sheet, $headers);
 
+        $this->eventDispatcher->dispatch(new HeadersGeneratedEvent($sheet, $report, $dataUtils));
+
         // importante hacer esto luego de pintar los headers
         $this->dataListUtils->configureDataListsFromHeaders($excel, $headers, $reportInfo);
 
@@ -128,6 +140,10 @@ class ReportGenerator
             $printedInfo->setNextRow($row);
             $report->customize($excel, $sheet, $dataUtils);
         }
+
+        $this->eventDispatcher->dispatch(new ReportGeneratedEvent($sheet, $report, $dataUtils));
+
+        return $dataUtils;
     }
 
     private function fillRow(Worksheet $sheet, array $rowData, int $row, array $indexes = null): void
