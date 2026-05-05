@@ -12,6 +12,7 @@ class DataUtils
 
     public function __construct(
         public readonly PrintedInfo $printedInfo,
+        public readonly array $headerKeys,
     ) {
     }
 
