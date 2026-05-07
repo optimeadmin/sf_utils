@@ -252,6 +252,13 @@ class ReportGenerator
 
         if ($protectExcel) {
             $sheet->getProtection()->setSheet(true);
+            $sheet->getProtection()->setAutoFilter(true);
+            $sheet->getProtection()->setSort(true);
+            $sheet->getProtection()->setInsertRows(true);
+            $sheet->getProtection()->setDeleteRows(true);
+            $sheet->getProtection()->setFormatCells(true);
+            $sheet->getProtection()->setFormatColumns(true);
+            $sheet->getProtection()->setFormatRows(true);
         }
     }
 }
