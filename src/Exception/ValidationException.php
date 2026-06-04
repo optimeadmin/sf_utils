@@ -80,13 +80,13 @@ class ValidationException extends DomainException
     {
         return $this->errors ??= new ConstraintViolationList([
             new ConstraintViolation(
-                $this->getDomainMessage()->getMessage(),
+                $this->getErrorMessage(),
                 $this->getDomainMessage()->getMessage(),
                 $this->getDomainMessage()->getMessageParameters(),
                 null,
                 $this->errorPath,
                 null,
-            )
+            ),
         ]);
     }
 
@@ -158,12 +158,19 @@ class ValidationException extends DomainException
             $this->error->getMessageTemplate(),
             $this->error->getParameters(),
             $this->error->getRoot(),
-            'data.' . $this->error->getPropertyPath(),
+            'data.'.$this->error->getPropertyPath(),
             $this->error->getInvalidValue(),
             $this->error->getPlural(),
             $this->error->getCode(),
             $this->error->getConstraint(),
             $this->error->getCause()
         );
+    }
+
+    private function getErrorMessage(): string
+    {
+        return $this->translator
+            ? $this->getDomainMessage()->trans($this->translator)
+            : $this->getDomainMessage()->getMessage();
     }
 }

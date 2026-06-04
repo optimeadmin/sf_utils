@@ -54,6 +54,8 @@ class HandleDomainExceptionListener extends AbstractControllerAttributeListener
             return;
         }
 
+        $exception->setTranslator($this->translator);
+
         if ($exception instanceof ValidationException) {
             $event->setResponse(new JsonResponse(
                 $this->serializer->serialize($exception->getErrors(), 'json'),
