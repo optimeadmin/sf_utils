@@ -115,9 +115,10 @@ class ReportGenerator
 
         $sheet->getRowDimension($row)->setRowHeight(30);
 
-        $indexes = array_flip(array_keys($headers));
+        $headerKeys = array_keys($headers);
+        $indexes = array_flip($headerKeys);
         $printedInfo = new PrintedInfo($row, $indexes);
-        $dataUtils = new DataUtils($printedInfo);
+        $dataUtils = new DataUtils($printedInfo, $headerKeys);
 
         $this->fillHeaders($excel, $sheet, $headers, $reportInfo);
         $this->applyProtections($sheet, $headers, $dataUtils);
@@ -251,6 +252,13 @@ class ReportGenerator
 
         if ($protectExcel) {
             $sheet->getProtection()->setSheet(true);
+            $sheet->getProtection()->setAutoFilter(true);
+            $sheet->getProtection()->setSort(true);
+            $sheet->getProtection()->setInsertRows(true);
+            $sheet->getProtection()->setDeleteRows(true);
+            $sheet->getProtection()->setFormatCells(true);
+            $sheet->getProtection()->setFormatColumns(true);
+            $sheet->getProtection()->setFormatRows(true);
         }
     }
 }
